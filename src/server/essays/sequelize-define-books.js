@@ -9,7 +9,7 @@ var sequelize = new Sequelize('test.db', null, null, {
     },
 
     // SQLite only
-    storage: __dirname + '/data/test.db'
+    storage: '/Users/michael/Developer/LabWork/Web/bibliotheca/src/server/data/test.db'
 });
 
 sequelize
