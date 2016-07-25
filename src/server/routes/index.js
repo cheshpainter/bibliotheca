@@ -10,6 +10,7 @@ module.exports = function (app) {
     var Book = models.Book;
     var Edition = models.Edition;
     var Format = models.Format;
+    var Author = models.Author;
 
     var booksRouter = express.Router();
     app.use('/books', booksRouter);
@@ -72,10 +73,15 @@ module.exports = function (app) {
         Book.findById(bookId, {
             include: [{
                 model: Edition,
-                include: [{
-                    model: Format
-                }]
+                include: [Format]
+            }, {
+                model: Author,
+                as: 'writtenBy',
+                through: {
+                    attributes: []
+                }
             }]
+
         }).then(function (book) {
             // No results returned mean the object is not found
             if (book === null) {
@@ -146,6 +152,14 @@ module.exports = function (app) {
                 });
             }
         });
+    }
+
+    function getAllBooksForOneAuthor(req, res, next) {
+
+    }
+
+    function getAllAuthorsForOneBook(req, res, next) {
+
     }
 
     app.get('/api/maa', getMaa);
