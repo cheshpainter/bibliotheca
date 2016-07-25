@@ -44,7 +44,13 @@ module.exports = function (app) {
 
     function getAllBooks(req, res, next) {
 
-        Book.findAll().then(function (books) {
+        Book.findAll({
+            model: Author,
+            as: 'writtenBy',
+            through: {
+                attributes: []
+            }
+        }).then(function (books) {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object

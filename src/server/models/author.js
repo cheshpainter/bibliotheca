@@ -5,6 +5,9 @@ module.exports = function (sequelize, DataTypes) {
         name: {
             type: DataTypes.STRING,
             unique: true
+        },
+        role: {
+            type: DataTypes.STRING
         }
     }, {
         classMethods: {
