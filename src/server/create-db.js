@@ -18,7 +18,7 @@ models.sequelize.sync({
 }).then(function () {
     console.log('Successfully sync\'d');
 
-    var mBooks = Promise.map(books, function (book) {
+    var promisedBooks = Promise.map(books, function (book) {
         return Book.create(book, {
             include: [{
                 model: Edition,
@@ -27,30 +27,30 @@ models.sequelize.sync({
         });
     });
 
-    var mAuthors = Promise.map(authors, function (author) {
+    var promisedAuthors = Promise.map(authors, function (author) {
         return models.Author.create(author);
     });
 
-    Promise.join(mBooks, mAuthors, function (iBooks, iAuthors) {
+    Promise.join(promisedBooks, promisedAuthors, function (bookInstances, authorInstances) {
 
-        return Promise.map(iAuthors, function (iAuthor) {
-            authorships[iAuthor.name].forEach(function (bookTitle) {
-                var iBook = iBooks.find(function (aBook) {
+        return Promise.map(authorInstances, function (authorInstance) {
+            authorships[authorInstance.name].forEach(function (bookTitle) {
+                var bookInstance = bookInstances.find(function (aBook) {
                     return aBook.title === bookTitle;
                 });
-                iAuthor.addHasWritten(iBook);
+                authorInstance.addHasWritten(bookInstance);
             });
-            return iAuthor.save();
+            return authorInstance.save();
         });
 
-        //        iAuthors.forEach(function (iAuthor) {
-        //            authorships[iAuthor.name].forEach(function (bookTitle) {
-        //                var iBook = iBooks.find(function (aBook) {
+        //        authorInstances.forEach(function (authorInstance) {
+        //            authorships[authorInstance.name].forEach(function (bookTitle) {
+        //                var bookInstance = bookInstances.find(function (aBook) {
         //                    return aBook.title === bookTitle;
         //                });
-        //                iAuthor.addHasWritten(iBook);
+        //                authorInstance.addHasWritten(bookInstance);
         //            });
-        //            iAuthor.save();
+        //            authorInstance.save();
         //        });
 
     });
