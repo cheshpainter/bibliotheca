@@ -1,10 +1,8 @@
 "use strict";
 
-var express = require('express');
-var models = require("../models");
-
 module.exports = (function () {
 
+    var express = require('express');
     var books = express.Router();
 
     books.get('/', getAllBooks, function (req, res) {
@@ -19,10 +17,16 @@ module.exports = (function () {
         res.json(req.authors);
     });
 
-    var Book = models.Book;
-    var Edition = models.Edition;
-    var Format = models.Format;
-    var Author = models.Author;
+    books.get('/search', hasValidSearchCriteria, getBooksBySearchCriteria, function (req, res) {
+        res.json(req.books);
+    });
+
+    var models = require("../models"),
+        Book = models.Book,
+        Edition = models.Edition,
+        Format = models.Format,
+        Author = models.Author,
+        sequelize = models.sequelize;
 
     function getAllBooks(req, res, next) {
 
@@ -64,7 +68,15 @@ module.exports = (function () {
         Book.findById(bookId, {
             include: [{
                 model: Edition,
-                include: [Format]
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt', 'BookId']
+                },
+                include: [{
+                    model: Format,
+                    attributes: {
+                        exclude: ['id', 'createdAt', 'updatedAt', 'EditionId']
+                    }
+                }]
             }, {
                 model: Author,
                 as: 'writtenBy',
@@ -132,6 +144,64 @@ module.exports = (function () {
             }
         });
 
+    }
+
+    function hasValidSearchCriteria(req, res, next) {
+
+        if (req.query.title === undefined ||
+            req.query.title === null) {
+            return res.json({
+                errors: ["Invalid search query for books."]
+            });
+        } else {
+            next();
+        }
+
+    }
+
+    function getBooksBySearchCriteria(req, res, next) {
+
+        // books/search?title=Dark%20Orbit
+
+        // sequelize.fn('lower', sequelize.col('title'))
+
+        var title = req.query.title;
+
+        Book.findAll({
+            include: [{
+                model: Author,
+                as: 'writtenBy',
+                through: {
+                    attributes: []
+                }
+            }],
+            where: {
+                title: {
+                    $like: sequelize.fn('lower', sequelize.col('title')) + '%'
+                }
+            }
+        }).then(function (books) {
+            // No results returned mean the object is not found
+            if (books.length === 0) {
+                // We are able to set the HTTP status code on the res object
+                res.statusCode = 404;
+                return res.json({
+                    errors: ["Books not found"]
+                });
+            }
+            req.books = books;
+            next();
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve books"]
+                });
+            }
+        });
+
+        next();
     }
 
     return books;

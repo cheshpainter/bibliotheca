@@ -115,20 +115,15 @@ var books = [{
     }];
 
 var authors = [{
-    name: 'Carolyn Ives Gilman',
-    role: 'Author'
+    name: 'Carolyn Ives Gilman'
 }, {
-    name: 'Terry Pratchett',
-    role: 'Author'
+    name: 'Terry Pratchett'
 }, {
-    name: 'Dorothy L. Sayers',
-    role: 'Author'
+    name: 'Dorothy L. Sayers'
 }, {
-    name: 'Robert Eustace',
-    role: 'Author'
+    name: 'Robert Eustace'
 }, {
-    name: 'Neil Gaiman',
-    role: 'Author'
+    name: 'Neil Gaiman'
 }];
 
 var authorships = {

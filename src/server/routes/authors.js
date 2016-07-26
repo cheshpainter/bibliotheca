@@ -1,10 +1,8 @@
 'use strict';
 
-var express = require('express');
-var models = require("../models");
-
 module.exports = (function () {
 
+    var express = require('express');
     var authors = express.Router();
 
     authors.get('/', getAllAuthors, function (req, res) {
@@ -19,10 +17,9 @@ module.exports = (function () {
         res.json(req.books);
     });
 
-    var Book = models.Book;
-    var Edition = models.Edition;
-    var Format = models.Format;
-    var Author = models.Author;
+    var models = require("../models"),
+        Book = models.Book,
+        Author = models.Author;
 
     function getAllAuthors(req, res, next) {
 
