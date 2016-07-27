@@ -5,21 +5,7 @@ module.exports = (function () {
     var express = require('express');
     var books = express.Router();
 
-    books.get('/', getAllBooks, function (req, res) {
-        res.json(req.books);
-    });
 
-    books.get('/:id', getOneBook, function (req, res) {
-        res.json(req.book);
-    });
-
-    books.get('/:id/authors', getAllAuthorsForOneBook, function (req, res) {
-        res.json(req.authors);
-    });
-
-    books.get('/search', hasValidSearchCriteria, getBooksBySearchCriteria, function (req, res) {
-        res.json(req.books);
-    });
 
     var models = require("../models"),
         Book = models.Book,
@@ -28,7 +14,7 @@ module.exports = (function () {
         Author = models.Author,
         sequelize = models.sequelize;
 
-    function getAllBooks(req, res, next) {
+    var allBooks = function (req, res, next) {
 
         Book.findAll({
             include: [{
@@ -59,23 +45,19 @@ module.exports = (function () {
                 });
             }
         });
-    }
+    };
 
-    function getOneBook(req, res, next) {
+    var getOneBook = function (req, res, next) {
+
+        console.log('BOOK,BOOK,BOOK');
 
         var bookId = req.params.id;
 
         Book.findById(bookId, {
             include: [{
                 model: Edition,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'BookId']
-                },
                 include: [{
-                    model: Format,
-                    attributes: {
-                        exclude: ['id', 'createdAt', 'updatedAt', 'EditionId']
-                    }
+                    model: Format
                 }]
             }, {
                 model: Author,
@@ -105,9 +87,9 @@ module.exports = (function () {
                 });
             }
         });
-    }
+    };
 
-    function getAllAuthorsForOneBook(req, res, next) {
+    var getAllAuthorsForOneBook = function (req, res, next) {
 
         var bookId = req.params.id;
 
@@ -144,9 +126,11 @@ module.exports = (function () {
             }
         });
 
-    }
+    };
 
-    function hasValidSearchCriteria(req, res, next) {
+    var hasValidSearchCriteria = function (req, res, next) {
+
+        console.log('hasValidSearchCriteria');
 
         if (req.query.title === undefined ||
             req.query.title === null) {
@@ -157,13 +141,15 @@ module.exports = (function () {
             next();
         }
 
-    }
+    };
 
-    function getBooksBySearchCriteria(req, res, next) {
+    var getBooksBySearchCriteria = function (req, res, next) {
 
         // books/search?title=Dark%20Orbit
 
         // sequelize.fn('lower', sequelize.col('title'))
+
+        console.log('getBooksBySearchCriteria for ' + req.query.title);
 
         var title = req.query.title;
 
@@ -202,7 +188,19 @@ module.exports = (function () {
         });
 
         next();
-    }
+    };
+
+    books.get('/', [allBooks], function (req, res) {
+        res.json(req.books);
+    });
+
+    books.get('/:id', [getOneBook], function (req, res) {
+        res.json(req.book);
+    });
+
+    books.get('/search', [getBooksBySearchCriteria], function (req, res) {
+        res.json(req.books);
+    });
 
     return books;
 })();
