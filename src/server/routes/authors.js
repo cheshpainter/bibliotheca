@@ -5,23 +5,11 @@ module.exports = (function () {
     var express = require('express');
     var authors = express.Router();
 
-    authors.get('/', getAllAuthors, function (req, res) {
-        res.json(req.authors);
-    });
-
-    authors.get('/:id', getOneAuthor, function (req, res) {
-        res.json(req.author);
-    });
-
-    authors.get('/:id/books', getAllBooksForOneAuthor, function (req, res) {
-        res.json(req.books);
-    });
-
     var models = require("../models"),
         Book = models.Book,
         Author = models.Author;
 
-    function getAllAuthors(req, res, next) {
+    var getAllAuthors = function (req, res, next) {
 
         Author.findAll().then(function (authors) {
             // No results returned mean the object is not found
@@ -45,7 +33,7 @@ module.exports = (function () {
         });
     }
 
-    function getOneAuthor(req, res, next) {
+    var getOneAuthor = function (req, res, next) {
 
         var authorId = req.params.id;
 
@@ -71,7 +59,7 @@ module.exports = (function () {
         });
     }
 
-    function getAllBooksForOneAuthor(req, res, next) {
+    var getAllBooksForOneAuthor = function (req, res, next) {
 
         var authorId = req.params.id;
 
@@ -109,6 +97,18 @@ module.exports = (function () {
         });
 
     }
+
+    authors.get('/', [getAllAuthors], function (req, res) {
+        res.json(req.authors);
+    });
+
+    authors.get('/:id', [getOneAuthor], function (req, res) {
+        res.json(req.author);
+    });
+
+    authors.get('/:id/books', [getAllBooksForOneAuthor], function (req, res) {
+        res.json(req.books);
+    });
 
     return authors;
 })();

@@ -5,8 +5,6 @@ module.exports = (function () {
     var express = require('express');
     var books = express.Router();
 
-
-
     var models = require("../models"),
         Book = models.Book,
         Edition = models.Edition,
@@ -14,7 +12,7 @@ module.exports = (function () {
         Author = models.Author,
         sequelize = models.sequelize;
 
-    var allBooks = function (req, res, next) {
+    var getAllBooks = function (req, res, next) {
 
         Book.findAll({
             include: [{
@@ -49,8 +47,6 @@ module.exports = (function () {
 
     var getOneBook = function (req, res, next) {
 
-        console.log('BOOK,BOOK,BOOK');
-
         var bookId = req.params.id;
 
         Book.findById(bookId, {
@@ -66,7 +62,6 @@ module.exports = (function () {
                     attributes: []
                 }
             }]
-
         }).then(function (book) {
             // No results returned mean the object is not found
             if (book === null) {
@@ -89,69 +84,38 @@ module.exports = (function () {
         });
     };
 
-    var getAllAuthorsForOneBook = function (req, res, next) {
-
-        var bookId = req.params.id;
-
-        Author.findAll({
-            include: [{
-                model: Book,
-                as: 'hasWritten',
-                attributes: ['id'],
-                through: {
-                    attributes: []
-                },
-                where: {
-                    id: bookId
-                }
-            }]
-        }).then(function (authors) {
-            // No results returned mean the object is not found
-            if (authors.length === 0) {
-                // We are able to set the HTTP status code on the res object
-                res.statusCode = 404;
-                return res.json({
-                    errors: ["Authors not found"]
-                });
-            }
-            req.authors = authors;
-            next();
-        }).catch(function (err) {
-            if (err) {
-                console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve authors"]
-                });
-            }
-        });
-
-    };
-
     var hasValidSearchCriteria = function (req, res, next) {
 
-        console.log('hasValidSearchCriteria');
+        if (req.query.title !== undefined &&
+            req.query.title !== null) {
 
-        if (req.query.title === undefined ||
-            req.query.title === null) {
+            req.criteria = {
+                value: req.query.title,
+                column: 'Book.title'
+            };
+            next();
+
+        } else if (req.query.name !== undefined &&
+            req.query.name !== null) {
+
+            req.criteria = {
+                value: req.query.name,
+                column: 'writtenBy.name'
+            };
+            next();
+
+        } else {
             return res.json({
                 errors: ["Invalid search query for books."]
             });
-        } else {
-            next();
         }
-
     };
 
     var getBooksBySearchCriteria = function (req, res, next) {
 
-        // books/search?title=Dark%20Orbit
-
-        // sequelize.fn('lower', sequelize.col('title'))
-
         console.log('getBooksBySearchCriteria for ' + req.query.title);
 
-        var title = req.query.title;
+        var criteria = req.criteria;
 
         Book.findAll({
             include: [{
@@ -161,20 +125,23 @@ module.exports = (function () {
                     attributes: []
                 }
             }],
-            where: {
-                title: {
-                    $like: sequelize.fn('lower', sequelize.col('title')) + '%'
+            where: sequelize.where(
+                sequelize.fn("lower", sequelize.col(criteria.column)), {
+                    like: criteria.value + '%'
                 }
-            }
+            )
         }).then(function (books) {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 res.statusCode = 404;
                 return res.json({
-                    errors: ["Books not found"]
+                    errors: ["Books not found for search criteria"]
                 });
             }
+            //books.push({
+            //matching: criteria.value
+            //});
             req.books = books;
             next();
         }).catch(function (err) {
@@ -182,24 +149,22 @@ module.exports = (function () {
                 console.error(err);
                 res.statusCode = 500;
                 return res.json({
-                    errors: ["Could not retrieve books"]
+                    errors: ["Could not retrieve books for search criteria"]
                 });
             }
         });
-
-        next();
     };
 
-    books.get('/', [allBooks], function (req, res) {
+    books.get('/search', [hasValidSearchCriteria, getBooksBySearchCriteria], function (req, res) {
+        res.json(req.books);
+    });
+
+    books.get('/', [getAllBooks], function (req, res) {
         res.json(req.books);
     });
 
     books.get('/:id', [getOneBook], function (req, res) {
         res.json(req.book);
-    });
-
-    books.get('/search', [getBooksBySearchCriteria], function (req, res) {
-        res.json(req.books);
     });
 
     return books;
