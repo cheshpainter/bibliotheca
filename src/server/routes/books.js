@@ -73,6 +73,14 @@ module.exports = (function () {
             }
             req.book = book;
             next();
+
+
+            //            res.status(200)
+            //                .json({
+            //                    status: 'success',
+            //                    message: 'Inserted one puppy'
+            //                });
+
         }).catch(function (err) {
             if (err) {
                 console.error(err);
@@ -154,6 +162,70 @@ module.exports = (function () {
             }
         });
     };
+
+    var createOneBook = function (req, res, next) {
+
+        var book = req.body;
+
+        console.log(book);
+
+        Book.create(book, {
+            include: [{
+                model: Edition,
+                include: [Format]
+                    }, {
+                model: Author,
+                as: 'writtenBy'
+            }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                res.statusCode = 404;
+                return res.json({
+                    errors: ["Unsuccessful"]
+                });
+            }
+            req.book = book;
+            next();
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Error"]
+                });
+            }
+        });
+    }
+
+    //books/:id
+    //books/:id/edition/:id
+    //books/:id/edition/:id/format/:id
+
+    books.post('/', [createOneBook], function (req, res) {
+        res.json(req.book);
+    });
+
+    //    books.post('/:id/editions', [createOneEdition], function (req, res) {
+    //        res.json(req.book);
+    //    });
+    //
+    //    books.post('/:id/editions/:id/formats', [createOneFormat], function (req, res) {
+    //        res.json(req.book);
+    //    });
+    //
+    //    books.put('/:id', [updateOneBook], function (req, res) {
+    //        res.json(req.book);
+    //    });
+    //
+    //    books.put('/:id/editions/:id', [updateOneEdition], function (req, res) {
+    //        res.json(req.book);
+    //    });
+    //
+    //    books.put('/:id/editions/:id/formats/:id', [updateOneFormat], function (req, res) {
+    //        res.json(req.book);
+    //    });
 
     books.get('/search', [hasValidSearchCriteria, getBooksBySearchCriteria], function (req, res) {
         res.json(req.books);

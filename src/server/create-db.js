@@ -42,17 +42,6 @@ models.sequelize.sync({
             });
             return authorInstance.save();
         });
-
-        //        authorInstances.forEach(function (authorInstance) {
-        //            authorships[authorInstance.name].forEach(function (bookTitle) {
-        //                var bookInstance = bookInstances.find(function (aBook) {
-        //                    return aBook.title === bookTitle;
-        //                });
-        //                authorInstance.addHasWritten(bookInstance);
-        //            });
-        //            authorInstance.save();
-        //        });
-
     });
 
 }).catch(function (error) {
