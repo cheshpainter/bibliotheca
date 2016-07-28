@@ -199,6 +199,32 @@ module.exports = (function () {
         });
     }
 
+    var updateOneBook = function (req, res, next) {
+
+        var book = req.book;
+
+        var updates = req.body;
+
+
+        book.save().then(function (book) {
+            next();
+        });
+        //        book.save().then(function (book) {
+        //            next();
+        //        });
+
+
+
+        //        Book.update(book, {
+        //            where: {
+        //                id: book.id
+        //            }
+        //        }).then(function (bookInstance) {
+        //            next();
+        //        });
+
+    }
+
     //books/:id
     //books/:id/edition/:id
     //books/:id/edition/:id/format/:id
@@ -215,9 +241,9 @@ module.exports = (function () {
     //        res.json(req.book);
     //    });
     //
-    //    books.put('/:id', [updateOneBook], function (req, res) {
-    //        res.json(req.book);
-    //    });
+    books.put('/:id', [getOneBook, updateOneBook], function (req, res) {
+        res.json(req.book);
+    });
     //
     //    books.put('/:id/editions/:id', [updateOneEdition], function (req, res) {
     //        res.json(req.book);
