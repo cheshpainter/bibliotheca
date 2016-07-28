@@ -199,33 +199,157 @@ module.exports = (function () {
         });
     }
 
-    //books/:id
-    //books/:id/edition/:id
-    //books/:id/edition/:id/format/:id
+    //GET books-info  -- book title + authors' names + number of editions
+    //GET books-info/:id -- book title + authors' names + number of editions 
+    //GET books-info/search?title=title
+    //GET books-info/search?name=name
+
+    //GET books/:id -- book + edition urls
+    //GET books/:id/edition/:id edition + format urls
+    //GET books/:id/edition/:id/format/:id - format
+
+    //book-infos
+    //    {
+    //        data: { title: '', 
+    //            sortTitle: '', 
+    //            authors: [''], 
+    //            editions: '2'},
+    //        book: ['books/1'],
+    //        message: 'One book retrieved',
+    //        status: 200
+    //    }
+    //    
+    //    {
+    //        data: { title: '', sortTitle: '', authors: [''], editions: '1' },
+    //        message: 'All books retrieved',
+    //        status: 200
+    //    }
+    //
+    //books
+    //    {
+    //        data: {},
+    //        editions: ['books/1/edition/1', 'books/1/edition/2'],
+    //        authors: ['authors/1', 'authors/2'],
+    //        message: 'One book retrieved',
+    //        status: 200
+    //    }
+    //    
+    //    {
+    //        data: {},
+    //        formats: ['books/1/editiona/1/formats/1', 'books/1/editiona/2/formats/2'],
+    //        message: 'One book retrieved',
+    //        status: 200
+    //    }
+
+    //POST books -- book; return book url
+    //POST books/:id/editions -- edition; return edition urls
+    //POST books/:id/editions/:id/formats -- format; return form url
+
+    //    {
+    //        book: ['books/1'],
+    //        message: 'One book created',
+    //        status: 200
+    //    }
+
+    //    {
+    //        edition: ['books/1/editions/1'],
+    //        message: 'One book created',
+    //        status: 200
+    //    }
+
+    //PUT books/:id -- book; return book url
+    //PUT books/:id/editions/id -- edition; return edition urls
+    //PUT books/:id/editions/:id/formats/:id -- format; return form url
+
+    var createOneEdition = function (req, res, next) {
+
+        var edition = req.body;
+
+        Edition.create(edition, {
+            include: [Format]
+        }).then(function (edition) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                res.statusCode = 404;
+                return res.json({
+                    errors: ["Unsuccessful"]
+                });
+            }
+            req.edition = edition;
+            next();
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Error"]
+                });
+            }
+        });
+    }
+
+    var createOneFormat = function (req, res, next) {
+
+        var format = req.body;
+
+        Format.create(format).then(function (format) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                res.statusCode = 404;
+                return res.json({
+                    errors: ["Unsuccessful"]
+                });
+            }
+            req.format = format;
+            next();
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Error"]
+                });
+            }
+        });
+    }
+
+    var updateOneBook = function (req, res, next) {
+        next();
+    }
+
+    var updateOneEdition = function (req, res, next) {
+        next();
+    }
+
+    var updateOneFormat = function (req, res, next) {
+        next();
+    }
 
     books.post('/', [createOneBook], function (req, res) {
         res.json(req.book);
     });
 
-    //    books.post('/:id/editions', [createOneEdition], function (req, res) {
-    //        res.json(req.book);
-    //    });
-    //
-    //    books.post('/:id/editions/:id/formats', [createOneFormat], function (req, res) {
-    //        res.json(req.book);
-    //    });
-    //
-    //    books.put('/:id', [updateOneBook], function (req, res) {
-    //        res.json(req.book);
-    //    });
-    //
-    //    books.put('/:id/editions/:id', [updateOneEdition], function (req, res) {
-    //        res.json(req.book);
-    //    });
-    //
-    //    books.put('/:id/editions/:id/formats/:id', [updateOneFormat], function (req, res) {
-    //        res.json(req.book);
-    //    });
+    books.post('/:id/editions', [createOneEdition], function (req, res) {
+        res.json(req.book);
+    });
+
+    books.post('/:id/editions/:id/formats', [createOneFormat], function (req, res) {
+        res.json(req.book);
+    });
+
+    books.put('/:id', [updateOneBook], function (req, res) {
+        res.json(req.book);
+    });
+
+    books.put('/:id/editions/:id', [updateOneEdition], function (req, res) {
+        res.json(req.book);
+    });
+
+    books.put('/:id/editions/:id/formats/:id', [updateOneFormat], function (req, res) {
+        res.json(req.book);
+    });
 
     books.get('/search', [hasValidSearchCriteria, getBooksBySearchCriteria], function (req, res) {
         res.json(req.books);
