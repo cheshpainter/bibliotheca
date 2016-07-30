@@ -3,7 +3,7 @@
 module.exports = (function () {
 
     var express = require('express');
-    var books = express.Router();
+    var router = express.Router();
 
     var models = require("../models"),
         Book = models.Book,
@@ -12,93 +12,19 @@ module.exports = (function () {
         Author = models.Author,
         sequelize = models.sequelize;
 
-    //GET books-info  -- book title + authors' names + number of editions
-    //GET books-info/:id -- book title + authors' names + number of editions 
-    //GET books-info/search?title=title
-    //GET books-info/search?name=name
+    router.route('/').get(findAllBooks).post(createOneBook);
 
-    //GET books/:id -- book + edition urls
-    //GET books/:id/edition/:id edition + format urls
-    //GET books/:id/edition/:id/format/:id - format
+    router.route('/:bookid/editions').get(findAllEditions).post(createOneEdition);
 
-    //book-infos
-    //    {
-    //        data: { title: '', 
-    //            sortTitle: '', 
-    //            authors: [''], 
-    //            editions: '2'},
-    //        book: ['books/1'],
-    //        message: 'One book retrieved',
-    //        status: 200
-    //    }
-    //    
-    //    {
-    //        data: { title: '', sortTitle: '', authors: [''], editions: '1' },
-    //        message: 'All books retrieved',
-    //        status: 200
-    //    }
-    //
-    //books
-    //    {
-    //        data: {},
-    //        editions: ['books/1/edition/1', 'books/1/edition/2'],
-    //        authors: ['authors/1', 'authors/2'],
-    //        message: 'One book retrieved',
-    //        status: 200
-    //    }
-    //    
-    //    {
-    //        data: {},
-    //        formats: ['books/1/editiona/1/formats/1', 'books/1/editiona/2/formats/2'],
-    //        message: 'One book retrieved',
-    //        status: 200
-    //    }
+    router.route('/:bookid/editions/:editionid/formats').get(findAllFormats).post(createOneFormat);
 
-    //POST books -- book; return book url
-    //POST books/:id/editions -- edition; return edition urls
-    //POST books/:id/editions/:id/formats -- format; return form url
+    router.route('/:bookid').get(findOneBook).put(updateOneBook);
 
-    //    {
-    //        book: ['books/1'],
-    //        message: 'One book created',
-    //        status: 200
-    //    }
+    router.route('/:bookid/editions/:editionid').get(findOneEdition).put(updateOneEdition);
 
-    //    {
-    //        edition: ['books/1/editions/1'],
-    //        message: 'One book created',
-    //        status: 200
-    //    }
+    router.route('/:bookid/editions/:editionid/formats/:formatid').get(findOneFormat).put(updateOneFormat);
 
-    //PUT books/:id -- book; return book url
-    //PUT books/:id/editions/id -- edition; return edition urls
-    //PUT books/:id/editions/:id/formats/:id -- format; return form url
-
-    books.post('/', function (req, res) {
-        res.json({});
-    });
-
-    books.post('/:id/editions', function (req, res) {
-        res.json({});
-    });
-
-    books.post('/:id/editions/:id/formats', function (req, res) {
-        res.json({});
-    });
-
-    books.put('/:id', function (req, res) {
-        res.json({});
-    });
-
-    books.put('/:id/editions/:id', function (req, res) {
-        res.json(req.book);
-    });
-
-    books.put('/:id/editions/:id/formats/:id', function (req, res) {
-        res.json({});
-    });
-
-    books.get('/', function (req, res) {
+    function findAllBooks(req, res) {
 
         Book.findAll({
             include: [{
@@ -116,17 +42,44 @@ module.exports = (function () {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                res.statusCode = 404;
-                return res.json({
+                res.code(404).json({
                     errors: ["Books not found"]
                 });
             }
 
-            var books = mapDaoBooks(books);
+            var pojos = [];
+
+            books.forEach(function (book) {
+
+                var pojo = book.get({
+                    plain: true
+                });
+
+                //console.log(raw);
+
+                delete(pojo.Editions);
+                delete(pojo.writtenBy);
+
+                pojo.links = {
+                    editions: [],
+                    authors: []
+                };
+
+                book.Editions.forEach(function (edition) {
+                    pojo.links.editions.push('/books/' + book.id + '/editions/' + edition.id);
+                });
+
+                book.writtenBy.forEach(function (author) {
+                    pojo.links.authors.push('/books/' + book.id + '/authors/' + author.id);
+                });
+
+                pojos.push(pojo);
+
+            });
 
             res.status(200)
                 .json({
-                    data: books,
+                    data: pojos,
                     status: 'success',
                     message: 'Got one books-info'
                 });
@@ -134,17 +87,139 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve books"]
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Got one books-info'
                 });
             }
         });
-    });
 
-    books.get('/:id', function (req, res) {
+    }
 
-        var bookId = req.params.id;
+    function createOneBook(req, res) {
+        res.json('Not implemented');
+    }
+
+    function findAllEditions(req, res) {
+
+        var bookId = req.params.bookid;
+
+        Book.findById(bookId, {
+            include: [{
+                model: Edition,
+                include: [{
+                    model: Format
+                }]
+            }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                return res.status(404).json({
+                    status: 'null result',
+                    message: "Books-info not found"
+                });
+            }
+
+            var editions = book.Editions;
+            var pojos = [];
+
+            editions.forEach(function (edition) {
+
+                var pojo = edition.get({
+                    plain: true
+                });
+
+                delete(pojo.Formats);
+                delete(pojo.BookId);
+
+                pojo.links = {
+                    formats: []
+                };
+
+                var formats = edition.Formats;
+
+                formats.forEach(function (format) {
+                    pojo.links.formats.push('/books/' + book.id + '/editions/' + edition.id + '/formats/' + format.id);
+                });
+
+                pojos.push(pojo);
+
+            });
+
+            res.status(200)
+                .json({
+                    data: pojos,
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+        });
+    }
+
+    function createOneEdition(req, res) {
+        res.send('Not implemented');
+    }
+
+    function findAllFormats(req, res) {
+
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+
+        Book.findById(bookId, {
+            include: [{
+                model: Edition,
+                include: [{
+                    model: Format
+                }],
+                where: [{
+                    id: editionId
+                }]
+            }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                return res.status(404).json({
+                    status: 'null result',
+                    message: "Books-info not found"
+                });
+            }
+
+            var edition = book.Editions[0];
+            var formats = edition.Formats;
+            var pojos = [];
+
+            formats.forEach(function (format) {
+
+                var pojo = format.get({
+                    plain: true
+                });
+
+                delete(pojo.EditionId);
+
+                pojo.links = {};
+
+                pojos.push(pojo);
+
+            });
+
+            res.status(200)
+                .json({
+                    data: pojos,
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+        });
+    }
+
+    function createOneFormat(req, res) {
+        res.send('Not implemented');
+    }
+
+    function findOneBook(req, res) {
+
+        var bookId = req.params.bookid;
 
         Book.findById(bookId, {
             include: [{
@@ -159,20 +234,165 @@ module.exports = (function () {
                 }
             }]
         }).then(function (book) {
+
             // No results returned mean the object is not found
             if (book === null) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).res.json({
+                return res.status(404).json({
                     status: 'null result',
                     message: "Books-info not found"
                 });
             }
 
-            var daoBooks = mapDaoBooks([book])
+            var pojo = book.get({
+                plain: true
+            });
+
+            delete(pojo.Editions);
+            delete(pojo.writtenBy);
+
+            pojo.links = {
+                editions: [],
+                authors: []
+            };
+
+            book.Editions.forEach(function (edition) {
+                pojo.links.editions.push('/books/' + book.id + '/editions/' + edition.id);
+            });
+
+            book.writtenBy.forEach(function (author) {
+                pojo.links.authors.push('/books/' + book.id + '/authors/' + author.id);
+            });
 
             res.status(200)
                 .json({
-                    data: daoBooks[0],
+                    data: pojo,
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
+    }
+
+    function updateOneBook(req, res) {
+        res.send('Not implemented');
+    }
+
+    function findOneEdition(req, res) {
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+
+        Book.findById(bookId, {
+            include: [{
+                model: Edition,
+                where: {
+                    id: editionId
+                },
+                include: [{
+                    model: Format
+                }]
+            }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                return res.status(404).json({
+                    status: 'null result',
+                    message: "Books-info not found"
+                });
+            }
+
+            var edition = book.Editions[0];
+
+            var pojo = edition.get({
+                plain: true
+            });
+
+            delete(pojo.Formats);
+            delete(pojo.BookId);
+
+            pojo.links = {
+                formats: []
+            };
+
+            edition.Formats.forEach(function (format) {
+                pojo.links.formats.push('/books/' + book.id + '/editions/' + edition.id + '/formats/' + format.id);
+            });
+
+            res.status(200)
+                .json({
+                    data: pojo,
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
+    }
+
+    function updateOneEdition(req, res) {
+        res.send('Not implemented');
+    }
+
+    function findOneFormat(req, res) {
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+        var formatId = req.params.formatid;
+
+        Book.findById(bookId, {
+            include: [{
+                model: Edition,
+                where: {
+                    id: editionId
+                },
+                include: [{
+                    model: Format,
+                    where: [{
+                        id: formatId
+                    }]
+                }]
+            }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                return res.status(404).json({
+                    status: 'null result',
+                    message: "Books-info not found"
+                });
+            }
+
+            var edition = book.Editions[0];
+            var format = edition.Formats[0];
+
+            var pojo = format.get({
+                plain: true
+            });
+
+            delete(pojo.EditionId);
+
+            pojo.links = {};
+
+            res.status(200)
+                .json({
+                    data: pojo,
                     status: 'success',
                     message: 'Got all books-info'
                 });
@@ -187,41 +407,11 @@ module.exports = (function () {
             }
         });
 
-    });
-
-    // create instance method on Book : asDao
-
-    function mapDaoBooks(books) {
-
-        var daoBooks = [];
-
-        books.forEach(function (book) {
-
-            var daoBook = {
-                title: book.title,
-                sortTitle: book.sortTitle,
-                description: book.description,
-                links: {
-                    editions: [],
-                    authors: []
-                }
-            };
-
-            book.Editions.forEach(function (edition) {
-                daoBook.links.editions.push('/books/' + book.id + '/editions/' + edition.id);
-            });
-
-            book.writtenBy.forEach(function (author) {
-                daoBook.links.authors.push('/books/' + book.id + '/authors/' + author.id);
-            });
-
-            daoBooks.push(daoBook);
-
-        });
-
-        return daoBooks;
-
     }
 
-    return books;
+    function updateOneFormat(req, res) {
+        res.send('Not implemented');
+    }
+
+    return router;
 })();

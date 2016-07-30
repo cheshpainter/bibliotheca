@@ -34,7 +34,7 @@ module.exports = (function () {
                 });
             }
 
-            var infos = booksDao(books);
+            var infos = mapDaoBooks(books);
 
             res.status(200)
                 .json({
@@ -109,7 +109,7 @@ module.exports = (function () {
                 });
             }
 
-            var infos = booksDao(books);
+            var infos = mapDaoBooks(books);
 
             res.status(200)
                 .json({
@@ -154,7 +154,7 @@ module.exports = (function () {
                 });
             }
 
-            var info = booksDao([book]);
+            var info = mapDaoBooks([book]);
 
             res.status(200)
                 .json({
@@ -175,7 +175,7 @@ module.exports = (function () {
 
     });
 
-    function booksDao(books) {
+    function mapDaoBooks(books) {
 
         var infos = [];
 
