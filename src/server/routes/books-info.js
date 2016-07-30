@@ -12,33 +12,48 @@ module.exports = (function () {
         Author = models.Author,
         sequelize = models.sequelize;
 
-    router.get('/', function (req, res) {
+    router.route('/').get(findAll);
+
+    router.route('/search').get(validateSearchCriteria, findSomeBySearchCriteria);
+
+    router.route('/:bookid').get(findOne);
+
+    function findAll(req, res) {
 
         Book.findAll({
-            include: [{
-                model: Edition
-            }, {
-                model: Author,
-                as: 'writtenBy',
-                through: {
-                    attributes: []
-                }
-            }]
-        }).then(function (books) {
+                attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+                group: [sequelize.col('Book.id')],
+                include: [{
+                    model: Edition
+                }, {
+                    model: Author,
+                    as: 'writtenBy',
+                    through: {
+                        attributes: []
+                    },
+                    attributes: ['name']
+                }]
+            }
+
+        ).then(function (books) {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).res.json({
+                return res.status(404).json({
                     status: 'null result',
                     message: "Books-info not found"
                 });
             }
 
-            var infos = mapDaoBooks(books);
+            var pojos = [];
+
+            books.forEach(function (book) {
+                pojos.push(createPojo(book));
+            });
 
             res.status(200)
                 .json({
-                    data: infos,
+                    data: pojos,
                     status: 'success',
                     message: 'Got all books-info'
                 });
@@ -46,15 +61,63 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                return res.status(500).res.json({
+                return res.status(500).json({
                     status: 'error',
                     message: 'Could not retrieve book'
                 });
             }
         });
-    });
+    }
 
-    router.get('/search', function (req, res, next) {
+    function findOne(req, res) {
+
+        var bookId = req.params.bookid;
+
+        Book.findById(bookId, {
+            attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+            group: [sequelize.col('Book.id')],
+            include: [{
+                model: Edition
+                }, {
+                model: Author,
+                as: 'writtenBy',
+                through: {
+                    attributes: []
+                },
+                attributes: ['name']
+                }]
+        }).then(function (book) {
+            // No results returned mean the object is not found
+            if (book === null) {
+                // We are able to set the HTTP status code on the res object
+                return res.status(404).json({
+                    status: "error",
+                    message: "Book not found"
+                });
+            }
+
+            var pojo = createPojo(book);
+
+            res.status(200)
+                .json({
+                    data: pojo,
+                    status: 'success',
+                    message: 'Got one books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
+
+    }
+
+    function validateSearchCriteria(req, res, next) {
 
         if (req.query.title !== undefined &&
             req.query.title !== null) {
@@ -75,25 +138,31 @@ module.exports = (function () {
             next();
 
         } else {
-            return res.status(404).res.json({
+            return res.status(404).json({
                 status: "error",
                 message: "Invalid search query for books"
             });
         }
-    }, function (req, res) {
+
+    }
+
+    function findSomeBySearchCriteria(req, res) {
 
         var criteria = req.criteria;
 
         Book.findAll({
+            attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+            group: [sequelize.col('Book.id')],
             include: [{
                 model: Edition
-            }, {
+                }, {
                 model: Author,
                 as: 'writtenBy',
                 through: {
                     attributes: []
-                }
-            }],
+                },
+                attributes: ['name']
+                }],
             where: sequelize.where(
                 sequelize.fn("lower", sequelize.col(criteria.column)), {
                     like: criteria.value + '%'
@@ -109,11 +178,15 @@ module.exports = (function () {
                 });
             }
 
-            var infos = mapDaoBooks(books);
+            var pojos = [];
+
+            books.forEach(function (book) {
+                pojos.push(createPojo(book));
+            });
 
             res.status(200)
                 .json({
-                    data: infos,
+                    data: pojos,
                     status: 'success',
                     message: 'Got all books-info'
                 });
@@ -127,80 +200,25 @@ module.exports = (function () {
                 });
             }
         });
+    }
 
-    });
+    function createPojo(book) {
 
-    router.get('/:id', function (req, res) {
-
-        var bookId = req.params.id;
-
-        Book.findById(bookId, {
-            include: [{
-                model: Edition
-            }, {
-                model: Author,
-                as: 'writtenBy',
-                through: {
-                    attributes: []
-                }
-            }]
-        }).then(function (book) {
-            // No results returned mean the object is not found
-            if (book === null) {
-                // We are able to set the HTTP status code on the res object
-                return res.status(404).json({
-                    status: "error",
-                    message: "Book not found"
-                });
+        var pojo = {
+            title: book.get('title'),
+            sortTitle: book.get('sortTitle'),
+            editionCount: book.get('EditionCount'),
+            authors: [],
+            links: {
+                books: ['/books/' + book.get('id')]
             }
+        };
 
-            var info = mapDaoBooks([book]);
-
-            res.status(200)
-                .json({
-                    data: info,
-                    status: 'success',
-                    message: 'Got one books-info'
-                });
-
-        }).catch(function (err) {
-            if (err) {
-                console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
-                });
-            }
+        book.writtenBy.forEach(function (author) {
+            pojo.authors.push(author.name);
         });
 
-    });
-
-    function mapDaoBooks(books) {
-
-        var infos = [];
-
-        books.forEach(function (book) {
-
-            var info = {
-                title: book.title,
-                sortTitle: book.sortTitle,
-                editions: book.Editions.length,
-                authors: [],
-                links: {
-                    book: '/books/' + book.id
-                }
-            };
-
-            book.writtenBy.forEach(function (author) {
-                info.authors.push(author.name);
-            });
-
-            infos.push(info);
-
-        });
-
-        return infos;
-
+        return pojo;
     }
 
     return router;
