@@ -17,5 +17,11 @@
     "morgan": "^1.3.0",
     "sequelize": "^3.23.6",
     "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/master"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-express-server": "^0.5.3"
   }
 }

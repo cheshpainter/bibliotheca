@@ -5,6 +5,12 @@ module.exports = function (sequelize, DataTypes) {
         format: {
             type: DataTypes.STRING
         }
+    }, {
+        classMethods: {
+            associate: function (models) {
+                Format.belongsTo(models.Edition);
+            }
+        }
     });
 
     return Format;

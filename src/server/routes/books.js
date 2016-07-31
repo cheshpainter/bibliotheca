@@ -97,23 +97,61 @@ module.exports = (function () {
     }
 
     function createOneBook(req, res) {
-        res.json('Not implemented');
+
+        var book = req.body;
+
+        Book.create(book).then(function (book) {
+
+            res.status(200)
+                .json({
+                    data: {
+                        links: {
+                            books: ['/books/' + book.id]
+                        }
+                    },
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Got one books-info'
+                });
+            }
+        });
     }
 
     function findAllEditions(req, res) {
 
         var bookId = req.params.bookid;
 
-        Book.findById(bookId, {
+        //        {
+        //            include: [{
+        //                attributes: ['id'],
+        //                model: Format
+        //            }, {
+        //                attributes: ['id'],
+        //                model: Book,
+        //                where: [{
+        //                    id: bookId
+        //                }]
+        //            }]
+        //        }
+
+        Edition.findAll({
             include: [{
-                model: Edition,
-                include: [{
-                    model: Format
-                }]
+                attributes: ['id'],
+                model: Format
+            }],
+            where: [{
+                BookId: bookId
             }]
-        }).then(function (book) {
+        }).then(function (editions) {
             // No results returned mean the object is not found
-            if (book === null) {
+            if (editions.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
@@ -121,7 +159,6 @@ module.exports = (function () {
                 });
             }
 
-            var editions = book.Editions;
             var pojos = [];
 
             editions.forEach(function (edition) {
@@ -140,7 +177,7 @@ module.exports = (function () {
                 var formats = edition.Formats;
 
                 formats.forEach(function (format) {
-                    pojo.links.formats.push('/books/' + book.id + '/editions/' + edition.id + '/formats/' + format.id);
+                    pojo.links.formats.push('/books/' + bookId + '/editions/' + edition.id + '/formats/' + format.id);
                 });
 
                 pojos.push(pojo);
@@ -157,28 +194,73 @@ module.exports = (function () {
     }
 
     function createOneEdition(req, res) {
-        res.send('Not implemented');
+
+        var bookId = req.params.bookid;
+        var edition = req.body;
+
+        Book.findAll({
+            where: [{
+                id: bookId
+            }]
+        }).then(function (book) {
+
+            Edition.create(edition).then(function (edition) {
+
+                book.addEdition(edition);
+                book.save({
+                    fields: ['Editions']
+                }).then(function () {
+                    res.status(200)
+                        .json({
+                            data: {
+                                links: {
+                                    editions: ['/books/' + bookId + '/editions/' + edition.id]
+                                }
+                            },
+                            status: 'success',
+                            message: 'Got all books-info'
+                        });
+                });
+            });
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Got one books-info'
+                });
+            }
+        });
     }
 
     function findAllFormats(req, res) {
 
-
         var bookId = req.params.bookid;
         var editionId = req.params.editionid;
 
-        Book.findById(bookId, {
-            include: [{
-                model: Edition,
-                include: [{
-                    model: Format
-                }],
-                where: [{
-                    id: editionId
-                }]
+        //        {
+        //            include: [{
+        //                attributes: ['id'],
+        //                model: Edition,
+        //                where: [{
+        //                    id: editionId
+        //                    }],
+        //                include: [{
+        //                    model: Book,
+        //                    where: [{
+        //                        id: bookId
+        //                    }]
+        //                }]
+        //            }]
+        //        }
+
+        Format.findAll({
+            where: [{
+                EditionId: editionId
             }]
-        }).then(function (book) {
+        }).then(function (formats) {
             // No results returned mean the object is not found
-            if (book === null) {
+            if (formats === null) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
@@ -186,8 +268,6 @@ module.exports = (function () {
                 });
             }
 
-            var edition = book.Editions[0];
-            var formats = edition.Formats;
             var pojos = [];
 
             formats.forEach(function (format) {
@@ -214,14 +294,51 @@ module.exports = (function () {
     }
 
     function createOneFormat(req, res) {
-        res.send('Not implemented');
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+        var format = req.body;
+
+        Edition.findAll({
+            where: [{
+                id: editionId
+            }]
+        }).then(function (edition) {
+
+            Format.create(format).then(function (format) {
+
+                edition.addFormat(format);
+                edition.save({
+                    fields: ['Formats']
+                }).then(function () {
+                    res.status(200)
+                        .json({
+                            data: {
+                                links: {
+                                    formats: ['/books/' + bookId + '/editions/' + editionId + '/formats' + format.id]
+                                }
+                            },
+                            status: 'success',
+                            message: 'Got all books-info'
+                        });
+                });
+            });
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Got one books-info'
+                });
+            }
+        });
     }
 
     function findOneBook(req, res) {
 
         var bookId = req.params.bookid;
 
-        Book.findById(bookId, {
+        Book.findAll({
             include: [{
                 attributes: ['id'],
                 model: Edition
@@ -232,17 +349,22 @@ module.exports = (function () {
                 through: {
                     attributes: []
                 }
+            }],
+            where: [{
+                id: bookId
             }]
-        }).then(function (book) {
+        }).then(function (books) {
 
             // No results returned mean the object is not found
-            if (book === null) {
+            if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
                     message: "Books-info not found"
                 });
             }
+
+            var book = books[0];
 
             var pojo = book.get({
                 plain: true
@@ -283,7 +405,35 @@ module.exports = (function () {
     }
 
     function updateOneBook(req, res) {
-        res.send('Not implemented');
+
+        var bookId = req.params.bookid;
+        var book = req.body;
+
+        Book.update(book, {
+            where: [{
+                id: bookId
+            }]
+        }).then(function (book) {
+
+            res.status(200)
+                .json({
+                    data: {
+                        links: {
+                            books: ['/books/' + bookId]
+                        }
+                    },
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
     }
 
     function findOneEdition(req, res) {
@@ -291,19 +441,28 @@ module.exports = (function () {
         var bookId = req.params.bookid;
         var editionId = req.params.editionid;
 
-        Book.findById(bookId, {
+        //        {
+        //            include: [{
+        //                model: Edition,
+        //                where: {
+        //                    id: editionId
+        //                },
+        //                include: [{
+        //                    model: Format
+        //                }]
+        //            }
+
+        Edition.findAll({
             include: [{
-                model: Edition,
-                where: {
-                    id: editionId
-                },
-                include: [{
-                    model: Format
-                }]
+                attributes: ['id'],
+                model: Format
+            }],
+            where: [{
+                id: editionId
             }]
-        }).then(function (book) {
+        }).then(function (editions) {
             // No results returned mean the object is not found
-            if (book === null) {
+            if (editions.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
@@ -311,7 +470,7 @@ module.exports = (function () {
                 });
             }
 
-            var edition = book.Editions[0];
+            var edition = editions[0];
 
             var pojo = edition.get({
                 plain: true
@@ -325,7 +484,7 @@ module.exports = (function () {
             };
 
             edition.Formats.forEach(function (format) {
-                pojo.links.formats.push('/books/' + book.id + '/editions/' + edition.id + '/formats/' + format.id);
+                pojo.links.formats.push('/books/' + bookId + '/editions/' + editionId + '/formats/' + format.id);
             });
 
             res.status(200)
@@ -347,7 +506,38 @@ module.exports = (function () {
     }
 
     function updateOneEdition(req, res) {
-        res.send('Not implemented');
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+        var edition = req.body;
+
+        Edition.update(edition, {
+            where: [{
+                id: editionId
+            }]
+        }).then(function (edition) {
+
+            res.status(200)
+                .json({
+                    data: {
+                        links: {
+                            editions: ['/books/' + bookId + '/editions/'
+                                edition.id]
+                        }
+                    },
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
     }
 
     function findOneFormat(req, res) {
@@ -356,22 +546,13 @@ module.exports = (function () {
         var editionId = req.params.editionid;
         var formatId = req.params.formatid;
 
-        Book.findById(bookId, {
-            include: [{
-                model: Edition,
-                where: {
-                    id: editionId
-                },
-                include: [{
-                    model: Format,
-                    where: [{
-                        id: formatId
-                    }]
-                }]
+        Format.findAll({
+            where: [{
+                id: formatId
             }]
-        }).then(function (book) {
+        }).then(function (formats) {
             // No results returned mean the object is not found
-            if (book === null) {
+            if (formats.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
@@ -379,8 +560,7 @@ module.exports = (function () {
                 });
             }
 
-            var edition = book.Editions[0];
-            var format = edition.Formats[0];
+            var format = formats[0];
 
             var pojo = format.get({
                 plain: true
@@ -410,7 +590,39 @@ module.exports = (function () {
     }
 
     function updateOneFormat(req, res) {
-        res.send('Not implemented');
+
+        var bookId = req.params.bookid;
+        var editionId = req.params.editionid;
+        var formatId = req.params.formatid;
+        var format = req.body;
+
+        Format.update(format, {
+            where: [{
+                id: formatId
+            }]
+        }).then(function (format) {
+
+            res.status(200)
+                .json({
+                    data: {
+                        links: {
+                            formats: ['/books/' + bookId + '/editions/'
+                                editionId + '/formats/' + format.id]
+                        }
+                    },
+                    status: 'success',
+                    message: 'Got all books-info'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({
+                    errors: ["Could not retrieve book"]
+                });
+            }
+        });
     }
 
     return router;

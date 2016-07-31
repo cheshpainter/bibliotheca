@@ -24,7 +24,8 @@ module.exports = (function () {
                 attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
                 group: [sequelize.col('Book.id')],
                 include: [{
-                    model: Edition
+                    model: Edition,
+                    attributes: ['id']
                 }, {
                     model: Author,
                     as: 'writtenBy',
@@ -143,7 +144,6 @@ module.exports = (function () {
                 message: "Invalid search query for books"
             });
         }
-
     }
 
     function findSomeBySearchCriteria(req, res) {

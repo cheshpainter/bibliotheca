@@ -38,6 +38,7 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function (models) {
+                Edition.belongsTo(models.Book);
                 Edition.hasMany(models.Format);
             }
         }
