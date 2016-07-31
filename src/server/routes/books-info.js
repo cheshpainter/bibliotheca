@@ -56,7 +56,7 @@ module.exports = (function () {
                 .json({
                     data: pojos,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved all books-info'
                 });
 
         }).catch(function (err) {
@@ -64,7 +64,7 @@ module.exports = (function () {
                 console.error(err);
                 return res.status(500).json({
                     status: 'error',
-                    message: 'Could not retrieve book'
+                    message: 'Could not retrieve books-info'
                 });
             }
         });
@@ -93,7 +93,7 @@ module.exports = (function () {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: "error",
-                    message: "Book not found"
+                    message: "Books-info not found"
                 });
             }
 
@@ -103,15 +103,15 @@ module.exports = (function () {
                 .json({
                     data: pojo,
                     status: 'success',
-                    message: 'Got one books-info'
+                    message: 'Retrieved one books-info'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                return res.statu(500).json({
+                    status: "error",
+                    message: "Could not retrieve books-info"
                 });
             }
         });
@@ -141,7 +141,7 @@ module.exports = (function () {
         } else {
             return res.status(404).json({
                 status: "error",
-                message: "Invalid search query for books"
+                message: "Invalid search criteria for books"
             });
         }
     }
@@ -174,7 +174,7 @@ module.exports = (function () {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: "error",
-                    message: "Book not found"
+                    message: "Books-info not found"
                 });
             }
 
@@ -188,15 +188,15 @@ module.exports = (function () {
                 .json({
                     data: pojos,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved all books-info matching criteria'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve books for search criteria"]
+                return res.status(500).json({
+                    status: "error",
+                    message: "Could not retrieve books-info"
                 });
             }
         });

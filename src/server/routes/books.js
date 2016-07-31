@@ -43,7 +43,8 @@ module.exports = (function () {
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 res.code(404).json({
-                    errors: ["Books not found"]
+                    statue: "error",
+                    message: ["Books not found"]
                 });
             }
 
@@ -54,8 +55,6 @@ module.exports = (function () {
                 var pojo = book.get({
                     plain: true
                 });
-
-                //console.log(raw);
 
                 delete(pojo.Editions);
                 delete(pojo.writtenBy);
@@ -81,7 +80,7 @@ module.exports = (function () {
                 .json({
                     data: pojos,
                     status: 'success',
-                    message: 'Got one books-info'
+                    message: 'Retrieved all books'
                 });
 
         }).catch(function (err) {
@@ -89,7 +88,7 @@ module.exports = (function () {
                 console.error(err);
                 return res.status(500).json({
                     status: 'error',
-                    message: 'Got one books-info'
+                    message: 'Could not retrieve books'
                 });
             }
         });
@@ -110,7 +109,7 @@ module.exports = (function () {
                         }
                     },
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Created one book'
                 });
 
         }).catch(function (err) {
@@ -118,7 +117,7 @@ module.exports = (function () {
                 console.error(err);
                 return res.status(500).json({
                     status: 'error',
-                    message: 'Got one books-info'
+                    message: 'Could not create book'
                 });
             }
         });
@@ -154,8 +153,8 @@ module.exports = (function () {
             if (editions.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
-                    status: 'null result',
-                    message: "Books-info not found"
+                    status: 'error',
+                    message: "Editions not found"
                 });
             }
 
@@ -187,9 +186,18 @@ module.exports = (function () {
             res.status(200)
                 .json({
                     data: pojos,
-                    status: 'success',
-                    message: 'Got all books-info'
+                    status: 'error',
+                    message: 'Rretrieved all editions for one book'
                 });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Could not retrieve editions'
+                });
+            }
         });
     }
 
@@ -202,9 +210,10 @@ module.exports = (function () {
             where: [{
                 id: bookId
             }]
-        }).then(function (book) {
-
+        }).then(function (books) {
             Edition.create(edition).then(function (edition) {
+
+                var book = books[0];
 
                 book.addEdition(edition);
                 book.save({
@@ -218,7 +227,7 @@ module.exports = (function () {
                                 }
                             },
                             status: 'success',
-                            message: 'Got all books-info'
+                            message: 'Created one edition'
                         });
                 });
             });
@@ -227,7 +236,7 @@ module.exports = (function () {
                 console.error(err);
                 return res.status(500).json({
                     status: 'error',
-                    message: 'Got one books-info'
+                    message: 'Could not create edition'
                 });
             }
         });
@@ -264,7 +273,7 @@ module.exports = (function () {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
-                    message: "Books-info not found"
+                    message: "Formats not found"
                 });
             }
 
@@ -288,8 +297,17 @@ module.exports = (function () {
                 .json({
                     data: pojos,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved all formats for one edition'
                 });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Could not retrieve formats'
+                });
+            }
         });
     }
 
@@ -303,9 +321,11 @@ module.exports = (function () {
             where: [{
                 id: editionId
             }]
-        }).then(function (edition) {
+        }).then(function (editions) {
 
             Format.create(format).then(function (format) {
+
+                var edition = editions[0];
 
                 edition.addFormat(format);
                 edition.save({
@@ -315,11 +335,11 @@ module.exports = (function () {
                         .json({
                             data: {
                                 links: {
-                                    formats: ['/books/' + bookId + '/editions/' + editionId + '/formats' + format.id]
+                                    formats: ['/books/' + bookId + '/editions/' + editionId + '/formats/' + format.id]
                                 }
                             },
                             status: 'success',
-                            message: 'Got all books-info'
+                            message: 'Created one format'
                         });
                 });
             });
@@ -328,7 +348,7 @@ module.exports = (function () {
                 console.error(err);
                 return res.status(500).json({
                     status: 'error',
-                    message: 'Got one books-info'
+                    message: 'Could not create one format'
                 });
             }
         });
@@ -359,8 +379,8 @@ module.exports = (function () {
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
-                    status: 'null result',
-                    message: "Books-info not found"
+                    status: 'error',
+                    message: "Book not found"
                 });
             }
 
@@ -390,15 +410,15 @@ module.exports = (function () {
                 .json({
                     data: pojo,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved one book'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                res.status(500).json({
+                    status: "error",
+                    message: "Could not retrieve book"
                 });
             }
         });
@@ -423,14 +443,15 @@ module.exports = (function () {
                         }
                     },
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Updated one book'
                 });
+
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                res.status(500).json({
+                    status: "error",
+                    message: "Could not update book"
                 });
             }
         });
@@ -466,7 +487,7 @@ module.exports = (function () {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
                     status: 'null result',
-                    message: "Books-info not found"
+                    message: "Edition not found"
                 });
             }
 
@@ -491,15 +512,15 @@ module.exports = (function () {
                 .json({
                     data: pojo,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved one edition'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                return res.status(500).json({
+                    status: "error",
+                    message: "Could not retrieve edition"
                 });
             }
         });
@@ -521,20 +542,20 @@ module.exports = (function () {
                 .json({
                     data: {
                         links: {
-                            editions: ['/books/' + bookId + '/editions/'
+                            editions: ['/books/' + bookId + '/editions/' +
                                 edition.id]
                         }
                     },
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Updated one edition'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                return res.status(500).json({
+                    status: "error",
+                    message: "Could not update edition"
                 });
             }
         });
@@ -555,8 +576,8 @@ module.exports = (function () {
             if (formats.length === 0) {
                 // We are able to set the HTTP status code on the res object
                 return res.status(404).json({
-                    status: 'null result',
-                    message: "Books-info not found"
+                    status: 'error',
+                    message: "Format not found"
                 });
             }
 
@@ -574,15 +595,15 @@ module.exports = (function () {
                 .json({
                     data: pojo,
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Retrieved one format'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                return res.status(500).json({
+                    status: "error",
+                    message: "Could not retrieve format"
                 });
             }
         });
@@ -606,20 +627,20 @@ module.exports = (function () {
                 .json({
                     data: {
                         links: {
-                            formats: ['/books/' + bookId + '/editions/'
+                            formats: ['/books/' + bookId + '/editions/' +
                                 editionId + '/formats/' + format.id]
                         }
                     },
                     status: 'success',
-                    message: 'Got all books-info'
+                    message: 'Update one format'
                 });
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.statusCode = 500;
-                return res.json({
-                    errors: ["Could not retrieve book"]
+                return res.status(500).json({
+                    status: "error",
+                    message: "Could not update format"
                 });
             }
         });
