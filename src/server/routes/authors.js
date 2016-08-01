@@ -160,6 +160,76 @@ module.exports = (function () {
 
     function updateOne(req, res) {
 
+        var authorId = req.params.authorid;
+        var author = req.body;
+
+        Author.update(author, {
+            where: [{
+                id: authorId
+            }]
+        }).then(function (author) {
+
+            res.status(200)
+                .json({
+                    data: {
+                        links: {
+                            books: ['/authors/' + authorId]
+                        }
+                    },
+                    status: 'success',
+                    message: 'Updated one author'
+                });
+
+        }).catch(function (err) {
+            if (err) {
+                console.error(err);
+                res.status(500).json({
+                    status: "error",
+                    message: "Could not update author"
+                });
+            }
+        });
+
+    }
+
+    function updateOneAuthorship(req, res) {
+
+        var authorId = req.params.authorid;
+        var bookId = req.params.bookid;
+
+        Author.findAll({
+            where: [{
+                id: authorId
+            }]
+        }).then(function (authors) {
+
+            var author = authors[0];
+
+            Book.findAll({
+                where: [{
+                    id: bookId
+                }]
+            }).then(function (books) {
+
+                var book = books[0];
+
+                author.addHasWritten(book);
+
+                author.save(function () {
+
+                    res.status(200).json({
+                        data: {
+                            links: {
+                                books: ['/books/' + bookId]
+                            }
+                        },
+                        status: "",
+                        message: ""
+                    });
+
+                });
+            });
+        });
     }
 
     return authors;
