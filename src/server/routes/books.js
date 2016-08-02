@@ -24,8 +24,6 @@ module.exports = (function () {
 
     router.route('/:bookid/editions/:editionid/formats/:formatid').get(findOneFormat).put(updateOneFormat);
 
-    router.route('/:bookid/writtenBy/:authorid').put(updateOneAuthorship);
-
     function findAllBooks(req, res) {
 
         Book.findAll({

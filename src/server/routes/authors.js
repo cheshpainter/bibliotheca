@@ -16,8 +16,6 @@ module.exports = (function () {
 
     router.route('/:authorid').get(findOne).put(updateOne);
 
-    router.route('/:authorid/hasWritten/:bookid').put(updateOneAuthorship);
-
     function findAll(req, res) {
 
         Author.findAll().then(function (authors) {
@@ -116,7 +114,7 @@ module.exports = (function () {
 
     function findOne(req, res) {
 
-        var authorId = req.params.id;
+        var authorId = req.params.authorid;
 
         Author.findAll({
             where: [{
@@ -189,48 +187,7 @@ module.exports = (function () {
                 });
             }
         });
-
     }
 
-    function updateOneAuthorship(req, res) {
-
-        var authorId = req.params.authorid;
-        var bookId = req.params.bookid;
-
-        Author.findAll({
-            where: [{
-                id: authorId
-            }]
-        }).then(function (authors) {
-
-            var author = authors[0];
-
-            Book.findAll({
-                where: [{
-                    id: bookId
-                }]
-            }).then(function (books) {
-
-                var book = books[0];
-
-                author.addHasWritten(book);
-
-                author.save(function () {
-
-                    res.status(200).json({
-                        data: {
-                            links: {
-                                books: ['/books/' + bookId]
-                            }
-                        },
-                        status: "",
-                        message: ""
-                    });
-
-                });
-            });
-        });
-    }
-
-    return authors;
+    return router;
 })();
