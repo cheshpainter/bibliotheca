@@ -42,7 +42,7 @@ module.exports = (function () {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                res.code(404).json({
+                return res.code(404).json({
                     statue: "error",
                     message: ["Books not found"]
                 });
@@ -76,7 +76,7 @@ module.exports = (function () {
 
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'success',
@@ -101,7 +101,7 @@ module.exports = (function () {
 
         Book.create(book).then(function (book) {
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: {
                         links: {
@@ -183,7 +183,7 @@ module.exports = (function () {
 
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'error',
@@ -211,6 +211,7 @@ module.exports = (function () {
                 id: bookId
             }]
         }).then(function (books) {
+
             Edition.create(edition).then(function (edition) {
 
                 var book = books[0];
@@ -219,7 +220,7 @@ module.exports = (function () {
                 book.save({
                     fields: ['Editions']
                 }).then(function () {
-                    res.status(200)
+                    return res.status(200)
                         .json({
                             data: {
                                 links: {
@@ -293,7 +294,7 @@ module.exports = (function () {
 
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'success',
@@ -331,7 +332,7 @@ module.exports = (function () {
                 edition.save({
                     fields: ['Formats']
                 }).then(function () {
-                    res.status(200)
+                    return res.status(200)
                         .json({
                             data: {
                                 links: {
@@ -406,7 +407,7 @@ module.exports = (function () {
                 pojo.links.authors.push('/books/' + book.id + '/authors/' + author.id);
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojo,
                     status: 'success',
@@ -416,7 +417,7 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.status(500).json({
+                return res.status(500).json({
                     status: "error",
                     message: "Could not retrieve book"
                 });
@@ -435,7 +436,7 @@ module.exports = (function () {
             }]
         }).then(function (book) {
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: {
                         links: {
@@ -449,7 +450,7 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.status(500).json({
+                return res.status(500).json({
                     status: "error",
                     message: "Could not update book"
                 });
@@ -508,7 +509,7 @@ module.exports = (function () {
                 pojo.links.formats.push('/books/' + bookId + '/editions/' + editionId + '/formats/' + format.id);
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojo,
                     status: 'success',
@@ -538,7 +539,7 @@ module.exports = (function () {
             }]
         }).then(function (edition) {
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: {
                         links: {
@@ -591,7 +592,7 @@ module.exports = (function () {
 
             pojo.links = {};
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojo,
                     status: 'success',
@@ -623,7 +624,7 @@ module.exports = (function () {
             }]
         }).then(function (format) {
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: {
                         links: {

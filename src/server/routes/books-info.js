@@ -52,7 +52,7 @@ module.exports = (function () {
                 pojos.push(createPojo(book));
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'success',
@@ -99,7 +99,7 @@ module.exports = (function () {
 
             var pojo = createPojo(book);
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojo,
                     status: 'success',
@@ -184,7 +184,7 @@ module.exports = (function () {
                 pojos.push(createPojo(book));
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'success',

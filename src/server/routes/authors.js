@@ -42,7 +42,7 @@ module.exports = (function () {
 
             });
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojos,
                     status: 'success',
@@ -53,7 +53,7 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.status(500).json({
+                return res.status(500).json({
                     status: "error",
                     message: "Could not retrieve authors"
                 });
@@ -75,7 +75,7 @@ module.exports = (function () {
             if (authors.length === 0) {
 
                 Author.create(author).then(function (author) {
-                    res.status(200)
+                    return res.status(200)
                         .json({
                             data: {
                                 links: {
@@ -138,7 +138,7 @@ module.exports = (function () {
 
             pojo.links = {};
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: pojo,
                     status: 'success',
@@ -148,7 +148,7 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.status(500).json({
+                return res.status(500).json({
                     status: "error",
                     message: "Could not retrieve author"
                 });
@@ -167,7 +167,7 @@ module.exports = (function () {
             }]
         }).then(function (author) {
 
-            res.status(200)
+            return res.status(200)
                 .json({
                     data: {
                         links: {
@@ -181,7 +181,7 @@ module.exports = (function () {
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                res.status(500).json({
+                return res.status(500).json({
                     status: "error",
                     message: "Could not update author"
                 });
