@@ -2,9 +2,9 @@
 
 module.exports = function (app) {
 
-    app.use('/books-info', require('./books-info'));
-    app.use('/books', require('./books'));
-    app.use('/authors', require('./authors'));
-    app.use('/authorships', require('./authorships'));
+    app.use('/api/books-info', require('./books-info'));
+    app.use('/api/books', require('./books'));
+    app.use('/api/authors', require('./authors'));
+    app.use('/api/authorships', require('./authorships'));
 
 };
