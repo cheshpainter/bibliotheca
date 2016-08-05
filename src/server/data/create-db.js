@@ -1,9 +1,7 @@
-var models = require("./models");
+var models = require("./../models");
 var Promise = require("bluebird");
 
-var testd = require('./data/test-data.js');
-
-var jsonfileservice = require('./routes/utils/jsonfileservice')();
+var jsonfileservice = require('./../routes/utils/jsonfileservice')();
 
 //var books = testd.books;
 //var authors = testd.authors;
