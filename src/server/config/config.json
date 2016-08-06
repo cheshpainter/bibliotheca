@@ -1,5 +1,5 @@
 {
-    "development": {
+    "dev": {
         "host": "localhost",
         "dialect": "sqlite",
         "pool": {
@@ -7,7 +7,7 @@
             "min": 0,
             "idle": 10000
         },
-        "storage": "./data/test.db"
+        "storage": "./src/server/data/test.db"
     },
     "test": {
         "username": "root",
