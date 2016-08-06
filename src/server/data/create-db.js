@@ -3,10 +3,6 @@ var Promise = require("bluebird");
 
 var jsonfileservice = require('./../routes/utils/jsonfileservice')();
 
-//var books = testd.books;
-//var authors = testd.authors;
-//var authorships = testd.authorships;
-
 var json = jsonfileservice.getJsonFromFile('/../../data/test-data.json');
 
 var Book = models.Book;
