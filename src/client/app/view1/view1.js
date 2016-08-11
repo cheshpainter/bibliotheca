@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('myApp.view1', ['ui.grid'])
@@ -14,14 +14,16 @@
             data: []
         };
 
-        vm.gridOptions.columnDefs = [
-            {
-                name: 'firstName'
-            },
-            {
-                name: 'lastName'
-            }
-        ];
+        vm.gridOptions.columnDefs = [{
+            name: 'Title',
+            field: 'title'
+        }, {
+            name: 'Author(s)',
+            field: 'name'
+        }, {
+            name: 'Edition(s)',
+            field: 'EditionCount'
+        }];
 
         //        vm.gridOptions.multiSelect = false;
         //        vm.gridOptions.enableRowSelection = true;
@@ -33,8 +35,9 @@
         //        };
 
         vm.gridOptions.data = [{
-            "firstName": "Cox",
-            "lastName": "Carney"
+            "title": "The Color of Magic (Discworld #1)",
+            "name": "Terry Pratchett",
+            "EditionCount": 3
         }];
     }
 
