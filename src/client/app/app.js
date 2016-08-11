@@ -15,13 +15,13 @@ angular.module('myApp', [
     $stateProvider
         .state('view1', {
             url: "/view1",
-            templateUrl: "view1/view1.html",
+            templateUrl: "src/client/app/view1/view1.html",
             controller: 'View1Ctrl',
             controllerAs: 'view1Ctrl'
         })
         .state('view2', {
             url: "/view2",
-            templateUrl: "view2/view2.html",
+            templateUrl: "src/client/app/view2/view2.html",
             controller: 'View2Ctrl',
             controllerAs: 'view2Ctrl'
         });
