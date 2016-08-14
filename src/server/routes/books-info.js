@@ -115,7 +115,6 @@ module.exports = (function () {
                 });
             }
         });
-
     }
 
     function validateSearchCriteria(req, res, next) {

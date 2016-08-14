@@ -14,14 +14,12 @@ var routes;
 
 var environment = process.env.NODE_ENV;
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(compress()); // Compress response data with gzip
+app.use(compress());            // Compress response data with gzip
 app.use(logger('dev'));
 app.use(favicon(__dirname + '/favicon.ico'));
-app.use(cors()); // enable ALL CORS requests
+app.use(cors());                // enable ALL CORS requests
 app.use(errorHandler.init);
 
 routes = require('./routes/index')(app);
@@ -37,7 +35,7 @@ app.get('/ping', function(req, res, next) {
     res.send('pong');
 });
 
-switch (environment) {
+switch (environment){
     case 'production':
         console.log('** PRODUCTION ON AZURE **');
         console.log('serving from ' + './build/');
@@ -61,6 +59,6 @@ switch (environment) {
 app.listen(port, function() {
     console.log('Express server listening on port ' + port);
     console.log('env = ' + app.get('env') +
-        '\n__dirname = ' + __dirname +
+        '\n__dirname = ' + __dirname  +
         '\nprocess.cwd = ' + process.cwd());
 });

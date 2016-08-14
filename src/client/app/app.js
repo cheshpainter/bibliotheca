@@ -1,12 +1,14 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-angular.module('myApp', [
+angular.module('biblio', [
   'ui.router',
-  'myApp.view1',
-  'myApp.view2',
-  'myApp.version'
+  'biblio.view1',
+  'biblio.view2',
+  'biblio.version'
 ]).config(function ($stateProvider, $urlRouterProvider) {
+
+  console.log("loading app.js");
     //
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise("/view1");
@@ -15,13 +17,13 @@ angular.module('myApp', [
     $stateProvider
         .state('view1', {
             url: "/view1",
-            templateUrl: "src/client/app/view1/view1.html",
+            templateUrl: "/src/client/app/view1/view1.html",
             controller: 'View1Ctrl',
             controllerAs: 'view1Ctrl'
         })
         .state('view2', {
             url: "/view2",
-            templateUrl: "src/client/app/view2/view2.html",
+            templateUrl: "/src/client/app/view2/view2.html",
             controller: 'View2Ctrl',
             controllerAs: 'view2Ctrl'
         });

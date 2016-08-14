@@ -1,8 +1,8 @@
 'use strict';
 
-describe('myApp.view1 module', function() {
+describe('biblio.view1 module', function() {
 
-  beforeEach(module('myApp.view1'));
+  beforeEach(module('biblio.view1'));
 
   describe('view1 controller', function(){
 

@@ -1,12 +1,14 @@
 (function() {
     'use strict';
 
-    angular.module('myApp.view1', ['ui.grid'])
+    angular.module('biblio.view1', ['ui.grid'])
         .controller('View1Ctrl', View1Ctrl);
 
     View1Ctrl.$inject = ['$scope'];
 
     function View1Ctrl($scope) {
+
+      console.log("loading view1 ctrl");
 
         var vm = this;
 

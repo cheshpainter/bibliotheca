@@ -31,7 +31,7 @@
     "eqnull": true,
     "esnext": false,
     "evil": false,
-    "expr": false,
+    "expr": true,
     "funcscope": false,
     "globalstrict": false,
     "iterator": false,
@@ -41,7 +41,7 @@
     "loopfunc": true,
     "maxerr": false,
     "moz": false,
-    "multistr": false,
+    "multistr": true,
     "notypeof": false,
     "proto": false,
     "scripturl": false,
@@ -56,6 +56,22 @@
 
     "globals": {
         "angular": false,
-        "$": false
+        "describe": false, 
+        "it": false, 
+        "beforeEach": false, 
+        "afterEach": false, 
+        "expect": false, 
+        "inject": false, 
+        "mockData": false,
+        "sinon": false, 
+        "specHelper": false, 
+		"$controller": false, 
+		"$httpBackend": false, 
+		"$location": false, 
+		"$q": false, 
+		"$rootScope": false, 
+		"$route": false,
+        "$": false,
+        "ngMidwayTester": false
     }
 }
