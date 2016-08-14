@@ -1,96 +1,44 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="biblio">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="biblio" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My AngularJS App</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="/bower_components/html5-boilerplate/dist/css/normalize.css"> -->
+  <!-- <link rel="stylesheet" href="/bower_components/html5-boilerplate/dist/css/main.css"> -->
+  <link rel="stylesheet" href="/src/client/css/app.css">
+  <!-- <script src="/bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script> -->
+</head>
+<body>
+  <ul class="menu">
+    <li><a href="#!/view1">view1</a></li>
+    <li><a href="#!/view2">view2</a></li>
+  </ul>
 
-    <title>Starter Template for Bootstrap</title>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
 
-    <!-- inject-vendor:css -->
-    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/bower_components/toastr/toastr.css" rel="stylesheet" /> -->
-    <link href="/bower_components/angular-ui-grid/ui-grid.css" rel="stylesheet" ></script>
-    <!-- endinject -->
+  <div ng-view></div>
 
-    <!-- inject:css -->
-    <link href="/src/client/css/starter-template.css" rel="stylesheet">
-    <!-- endinject -->
-  </head>
+  <div>Angular seed app: v<span app-version></span></div>
 
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-
-            <li><a ui-sref="view1">View 1</a></li>
-            <li><a ui-sref="view2">View 2</a></li>
-
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-    <div class="container">
-
-      <a ui-sref="view1">View 1</a>
-
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-
-        <div ng-view></div>
-
-        <div>Angular seed app: v<span app-version></span></div>
-
-      </div>
-
-
-
-    </div><!-- /.container -->
-
-
-    <!-- inject-vendor:js -->
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="/bower_components/angular/angular.js"></script>
-    <!-- <script src="/bower_components/angular-animate/angular-animate.js"></script> -->
-    <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <!-- <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script> -->
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <!-- <script src="/bower_components/toastr/toastr.js"></script>
-    <script src="/bower_components/moment/moment.js"></script>
-    <script src="/bower_components/extras.angular.plus/ngplus-overlay.js"></script> -->
-    <script src="/bower_components/angular-ui-grid/ui-grid.js"></script>
-    <!-- endinject -->
-
-
-    <!-- inject:js -->
-    <!-- Bootstrapping -->
-    <script src="/src/client/app/app.js"></script>
-
-    <!-- Reusable Blocks/Modules -->
-    <script src="/src/client/app/view1/view1.js"></script>
-    <script src="/src/client/app/view2/view2.js"></script>
-    <script src="/src/client/app/components/version/interpolate-filter.js"></script>
-    <script src="/src/client/app/components/version/version-directive.js"></script>
-    <script src="/src/client/app/components/version/version.js"></script>
-  </body>
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/bower_components/angular-route/angular-route.js"></script>
+  <script src="/src/client/app/app.js"></script>
+  <script src="/src/client/app/view1/view1.js"></script>
+  <script src="/src/client/app/view2/view2.js"></script>
+  <script src="/src/client/app/components/version/version.js"></script>
+  <script src="/src/client/app/components/version/version-directive.js"></script>
+  <script src="/src/client/app/components/version/interpolate-filter.js"></script>
+</body>
 </html>

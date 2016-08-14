@@ -1,17 +1,14 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('biblio.view2', [])
-        .controller('View2Ctrl', View2Ctrl);
+angular.module('biblio.view2', ['ngRoute'])
 
-    View2Ctrl.$inject = ['$scope'];
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/view2', {
+    templateUrl: '/src/client/app/view2/view2.html',
+    controller: 'View2Ctrl'
+  });
+}])
 
-    function View2Ctrl($scope) {
+.controller('View2Ctrl', [function() {
 
-      console.log("loading view2 ctrl");
-
-        var vm = this;
-
-    }
-
-}());
+}]);
