@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = (function () {
+module.exports = (function() {
 
     var express = require('express');
     var router = express.Router();
@@ -20,9 +20,23 @@ module.exports = (function () {
 
     function findAll(req, res) {
 
+        //console.log('findAll');
+
         Book.findAll({
-                attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-                group: [sequelize.col('Book.id')],
+                // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+                // group: [sequelize.col('Book.id')],
+                // include: [{
+                //     model: Edition,
+                //     attributes: ['id']
+                // }, {
+                //     model: Author,
+                //     as: 'writtenBy',
+                //     through: {
+                //         attributes: []
+                //     },
+                //     attributes: ['name']
+                // }]
+                attributes: ['id', 'title', 'sortTitle'],
                 include: [{
                     model: Edition,
                     attributes: ['id']
@@ -36,83 +50,103 @@ module.exports = (function () {
                 }]
             }
 
-        ).then(function (books) {
+        ).then(function(books) {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).json({
-                    status: 'null result',
-                    message: "Books-info not found"
-                });
+                return res.status(404);
+                // return res.status(404).json({
+                //     status: 'null result',
+                //     message: "Books-info not found"
+                // });
             }
 
             var pojos = [];
 
-            books.forEach(function (book) {
+            books.forEach(function(book) {
                 pojos.push(createPojo(book));
             });
 
+            // return res.status(200)
+                // .json({
+                //     data: pojos,
+                //     status: 'success',
+                //     message: 'Retrieved all books-info'
+                // });
             return res.status(200)
-                .json({
-                    data: pojos,
-                    status: 'success',
-                    message: 'Retrieved all books-info'
-                });
+                .json(pojos);
 
-        }).catch(function (err) {
+        }).catch(function(err) {
             if (err) {
                 console.error(err);
-                return res.status(500).json({
-                    status: 'error',
-                    message: 'Could not retrieve books-info'
-                });
+                return res.status(500);
+                // return res.status(500).json({
+                //     status: 'error',
+                //     message: 'Could not retrieve books-info'
+                // });
             }
         });
     }
 
     function findOne(req, res) {
 
+        //console.log('findOne');
+
         var bookId = req.params.bookid;
 
         Book.findById(bookId, {
-            attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-            group: [sequelize.col('Book.id')],
+            // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+            // group: [sequelize.col('Book.id')],
+            // include: [{
+            //     model: Edition
+            // }, {
+            //     model: Author,
+            //     as: 'writtenBy',
+            //     through: {
+            //         attributes: []
+            //     },
+            //     attributes: ['name']
+            // }]
+            attributes: ['id', 'title', 'sortTitle'],
             include: [{
                 model: Edition
-                }, {
+            }, {
                 model: Author,
                 as: 'writtenBy',
                 through: {
                     attributes: []
                 },
                 attributes: ['name']
-                }]
-        }).then(function (book) {
+            }]
+        }).then(function(book) {
             // No results returned mean the object is not found
             if (book === null) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).json({
-                    status: "error",
-                    message: "Books-info not found"
-                });
+                // return res.status(404).json({
+                //     status: "error",
+                //     message: "Books-info not found"
+                // });
+                return res.status(404);
             }
 
             var pojo = createPojo(book);
 
-            return res.status(200)
-                .json({
-                    data: pojo,
-                    status: 'success',
-                    message: 'Retrieved one books-info'
-                });
+            // return res.status(200)
+            //     .json({
+            //         data: pojo,
+            //         status: 'success',
+            //         message: 'Retrieved one books-info'
+            //     });
+            return res.status(200).json(pojo);
 
-        }).catch(function (err) {
+        }).catch(function(err) {
             if (err) {
                 console.error(err);
-                return res.statu(500).json({
-                    status: "error",
-                    message: "Could not retrieve books-info"
-                });
+                // return res.statu(500).json({
+                //     status: "error",
+                //     message: "Could not retrieve books-info"
+                // });
+                return res.statu(500);
             }
         });
     }
@@ -138,10 +172,11 @@ module.exports = (function () {
             next();
 
         } else {
-            return res.status(404).json({
-                status: "error",
-                message: "Invalid search criteria for books"
-            });
+            // return res.status(404).json({
+            //     status: "error",
+            //     message: "Invalid search criteria for books"
+            // });
+            return res.status(404);
         }
     }
 
@@ -150,47 +185,60 @@ module.exports = (function () {
         var criteria = req.criteria;
 
         Book.findAll({
-            attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-            group: [sequelize.col('Book.id')],
+            // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
+            // group: [sequelize.col('Book.id')],
+            // include: [{
+            //     model: Edition
+            // }, {
+            //     model: Author,
+            //     as: 'writtenBy',
+            //     through: {
+            //         attributes: []
+            //     },
+            //     attributes: ['name']
+            // }],
+            attributes: ['id', 'title', 'sortTitle'],
             include: [{
                 model: Edition
-                }, {
+            }, {
                 model: Author,
                 as: 'writtenBy',
                 through: {
                     attributes: []
                 },
                 attributes: ['name']
-                }],
+            }],
             where: sequelize.where(
                 sequelize.fn("lower", sequelize.col(criteria.column)), {
                     like: criteria.value + '%'
                 }
             )
-        }).then(function (books) {
+        }).then(function(books) {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).json({
-                    status: "error",
-                    message: "Books-info not found"
-                });
+                // return res.status(404).json({
+                //     status: "error",
+                //     message: "Books-info not found"
+                // });
+                return res.status(404);
             }
 
             var pojos = [];
 
-            books.forEach(function (book) {
+            books.forEach(function(book) {
                 pojos.push(createPojo(book));
             });
 
-            return res.status(200)
-                .json({
-                    data: pojos,
-                    status: 'success',
-                    message: 'Retrieved all books-info matching criteria'
-                });
+            // return res.status(200)
+            //     .json({
+            //         data: pojos,
+            //         status: 'success',
+            //         message: 'Retrieved all books-info matching criteria'
+            //     });
+            return res.status(200).json(pojos);
 
-        }).catch(function (err) {
+        }).catch(function(err) {
             if (err) {
                 console.error(err);
                 return res.status(500).json({
@@ -206,14 +254,15 @@ module.exports = (function () {
         var pojo = {
             title: book.get('title'),
             sortTitle: book.get('sortTitle'),
-            editionCount: book.get('EditionCount'),
+            // editionCount: book.get('EditionCount'),
+            editionCount: book.Editions.length,
             authors: [],
             links: {
                 books: ['/books/' + book.get('id')]
             }
         };
 
-        book.writtenBy.forEach(function (author) {
+        book.writtenBy.forEach(function(author) {
             pojo.authors.push(author.name);
         });
 

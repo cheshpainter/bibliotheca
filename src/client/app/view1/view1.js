@@ -4,43 +4,70 @@
     angular.module('biblio.view1', ['ui.grid'])
         .controller('View1Ctrl', View1Ctrl);
 
-    View1Ctrl.$inject = ['$scope'];
+    View1Ctrl.$inject = ['$scope', 'BooksInfo'];
 
-    function View1Ctrl($scope) {
-
-      console.log("loading view1 ctrl");
+    function View1Ctrl($scope, BooksInfo) {
 
         var vm = this;
 
         vm.gridOptions = {
-            data: []
+            data: [],
+            columnDefs: [{
+                name: 'Title',
+                field: 'title'
+            }, {
+                name: 'Author(s)',
+                field: 'getJointAuthors()'
+            }, {
+                name: 'Edition(s)',
+                field: 'editionCount'
+            }]
         };
 
-        vm.gridOptions.columnDefs = [{
-            name: 'Title',
-            field: 'title'
-        }, {
-            name: 'Author(s)',
-            field: 'name'
-        }, {
-            name: 'Edition(s)',
-            field: 'EditionCount'
-        }];
+        console.log("loading view1 ctrl");
 
-        //        vm.gridOptions.multiSelect = false;
-        //        vm.gridOptions.enableRowSelection = true;
-        //        vm.gridOptions.enableRowHeaderSelection = false;
+        // var booksInfo = BooksInfo.get({ bookid: 1 }, function() {
+        //   console.log(booksInfo);
+        // });
 
-        //        vm.gridOptions.onRegisterApi = function (gridApi) {
-        //            vm.gridApi = gridApi;
-        //            vm.gridApi.selection.on.rowSelectionChanged($scope, edit);
-        //        };
+        BooksInfo.query(function(booksInfo) {
 
-        vm.gridOptions.data = [{
-            "title": "The Color of Magic (Discworld #1)",
-            "name": "Terry Pratchett",
-            "EditionCount": 3
-        }];
+          console.log(booksInfo);
+
+            angular.forEach(booksInfo, function(row) {
+                row.getJointAuthors = function() {
+                    return this.authors.join(', ');
+                }
+            });
+
+            vm.gridOptions = {
+                data: booksInfo
+            };
+
+            // vm.gridOptions = {
+            //     data: booksInfo,
+            //     columnDefs: [{
+            //         name: 'Title',
+            //         field: 'title'
+            //     }, {
+            //         name: 'Author(s)',
+            //         field: 'getJointAuthors()'
+            //     }, {
+            //         name: 'Edition(s)',
+            //         field: 'editionCount'
+            //     }]
+            // };
+
+            //        vm.gridOptions.multiSelect = false;
+            //        vm.gridOptions.enableRowSelection = true;
+            //        vm.gridOptions.enableRowHeaderSelection = false;
+
+            //        vm.gridOptions.onRegisterApi = function (gridApi) {
+            //            vm.gridApi = gridApi;
+            //            vm.gridApi.selection.on.rowSelectionChanged($scope, edit);
+            //        };
+
+        });
     }
 
 }());
