@@ -10,6 +10,7 @@ angular.module('biblio', [
     ]).config(function($stateProvider, $urlRouterProvider) {
 
         console.log("loading app.js");
+        
         //
         // For any unmatched url, redirect to /state1
         $urlRouterProvider.otherwise("/view1");
@@ -20,7 +21,12 @@ angular.module('biblio', [
                 url: "/view1",
                 templateUrl: "/src/client/app/view1/view1.html",
                 controller: 'View1Ctrl',
-                controllerAs: 'view1Ctrl'
+                controllerAs: 'view1Ctrl',
+                resolve: {
+                    booksInfo: function (booksInfoResource) {
+                        return booksInfoResource.query().$promise;
+                    }
+                }
             })
             .state('view2', {
                 url: "/view2",
@@ -29,18 +35,3 @@ angular.module('biblio', [
                 controllerAs: 'view2Ctrl'
             });
     });
-
-// 'use strict';
-//
-// // Declare app level module which depends on views, and components
-// angular.module('biblio', [
-//   'ngRoute',
-//   'biblio.view1',
-//   'biblio.view2',
-//   'biblio.version'
-// ]).
-// config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
-//   $locationProvider.hashPrefix('!');
-//
-//   $routeProvider.otherwise({redirectTo: '/view1'});
-// }]);
