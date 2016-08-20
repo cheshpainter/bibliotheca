@@ -4,24 +4,24 @@
 angular.module('biblio', [
         'ui.router',
         'ngResource',
-        'biblio.view1',
+        'biblio.books',
         'biblio.view2',
         'biblio.version'
     ]).config(function($stateProvider, $urlRouterProvider) {
 
         console.log("loading app.js");
-        
+
         //
         // For any unmatched url, redirect to /state1
-        $urlRouterProvider.otherwise("/view1");
+        $urlRouterProvider.otherwise("/books");
         //
         // Now set up the states
         $stateProvider
-            .state('view1', {
-                url: "/view1",
-                templateUrl: "/src/client/app/view1/view1.html",
-                controller: 'View1Ctrl',
-                controllerAs: 'view1Ctrl',
+            .state('books', {
+                url: "/books",
+                templateUrl: "/src/client/app/books/books.list.html",
+                controller: 'BooksListCtrl',
+                controllerAs: 'listCtrl',
                 resolve: {
                     booksInfo: function (booksInfoResource) {
                         return booksInfoResource.query().$promise;
