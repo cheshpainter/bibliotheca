@@ -42,6 +42,8 @@
             vm.gridApi = gridApi;
             vm.gridApi.selection.on.rowSelectionChanged($scope, function(row) {
               console.log(row);
+              //var selected = row.links.books[0];
+              //$state.go('books.detail', { bookid: selected });
             });
         };
     }

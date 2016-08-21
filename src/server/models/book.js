@@ -19,14 +19,7 @@ module.exports = function (sequelize, DataTypes) {
         classMethods: {
             associate: function (models) {
                 Book.hasMany(models.Edition);
-                //                Book.belongsToMany(models.Author, {
-                //                    as: 'writtenBy',
-                //                    through: 'Authorships',
-                //                    onDelete: "CASCADE",
-                //                    foreignKey: {
-                //                        allowNull: false
-                //                    }
-                //                });
+
                 Book.belongsToMany(models.Author, {
                     as: 'writtenBy',
                     through: 'Authorships'
