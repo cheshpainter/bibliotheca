@@ -19,7 +19,6 @@ module.exports = function (sequelize, DataTypes) {
         classMethods: {
             associate: function (models) {
                 Book.hasMany(models.Edition);
-
                 Book.belongsToMany(models.Author, {
                     as: 'writtenBy',
                     through: 'Authorships'

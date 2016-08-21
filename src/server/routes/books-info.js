@@ -20,22 +20,7 @@ module.exports = (function() {
 
     function findAll(req, res) {
 
-        //console.log('findAll');
-
         Book.findAll({
-                // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-                // group: [sequelize.col('Book.id')],
-                // include: [{
-                //     model: Edition,
-                //     attributes: ['id']
-                // }, {
-                //     model: Author,
-                //     as: 'writtenBy',
-                //     through: {
-                //         attributes: []
-                //     },
-                //     attributes: ['name']
-                // }]
                 attributes: ['id', 'title', 'sortTitle'],
                 include: [{
                     model: Edition,
@@ -68,11 +53,11 @@ module.exports = (function() {
             });
 
             // return res.status(200)
-                // .json({
-                //     data: pojos,
-                //     status: 'success',
-                //     message: 'Retrieved all books-info'
-                // });
+            // .json({
+            //     data: pojos,
+            //     status: 'success',
+            //     message: 'Retrieved all books-info'
+            // });
             return res.status(200)
                 .json(pojos);
 
@@ -90,23 +75,9 @@ module.exports = (function() {
 
     function findOne(req, res) {
 
-        //console.log('findOne');
-
         var bookId = req.params.bookid;
 
         Book.findById(bookId, {
-            // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-            // group: [sequelize.col('Book.id')],
-            // include: [{
-            //     model: Edition
-            // }, {
-            //     model: Author,
-            //     as: 'writtenBy',
-            //     through: {
-            //         attributes: []
-            //     },
-            //     attributes: ['name']
-            // }]
             attributes: ['id', 'title', 'sortTitle'],
             include: [{
                 model: Edition
@@ -185,18 +156,6 @@ module.exports = (function() {
         var criteria = req.criteria;
 
         Book.findAll({
-            // attributes: ['id', 'title', 'sortTitle', [sequelize.fn('count', sequelize.col('Editions.id')), 'EditionCount']],
-            // group: [sequelize.col('Book.id')],
-            // include: [{
-            //     model: Edition
-            // }, {
-            //     model: Author,
-            //     as: 'writtenBy',
-            //     through: {
-            //         attributes: []
-            //     },
-            //     attributes: ['name']
-            // }],
             attributes: ['id', 'title', 'sortTitle'],
             include: [{
                 model: Edition
@@ -241,10 +200,11 @@ module.exports = (function() {
         }).catch(function(err) {
             if (err) {
                 console.error(err);
-                return res.status(500).json({
-                    status: "error",
-                    message: "Could not retrieve books-info"
-                });
+                // return res.status(500).json({
+                //     status: "error",
+                //     message: "Could not retrieve books-info"
+                // });
+                return res.status(500);
             }
         });
     }
@@ -258,7 +218,7 @@ module.exports = (function() {
             editionCount: book.Editions.length,
             authors: [],
             links: {
-                books: ['/books/' + book.get('id')]
+                books: [book.get('id')]
             }
         };
 

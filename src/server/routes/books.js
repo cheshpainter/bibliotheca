@@ -42,10 +42,11 @@ module.exports = (function () {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                return res.code(404).json({
-                    statue: "error",
-                    message: ["Books not found"]
-                });
+                // return res.code(404).json({
+                //     statue: "error",
+                //     message: ["Books not found"]
+                // });
+                return res.code(404);
             }
 
             var pojos = [];
@@ -65,11 +66,11 @@ module.exports = (function () {
                 };
 
                 book.Editions.forEach(function (edition) {
-                    pojo.links.editions.push('/books/' + book.id + '/editions/' + edition.id);
+                    pojo.links.editions.push(edition.id);
                 });
 
                 book.writtenBy.forEach(function (author) {
-                    pojo.links.authors.push('/books/' + book.id + '/authors/' + author.id);
+                    pojo.links.authors.push(author.id);
                 });
 
                 pojos.push(pojo);
@@ -77,19 +78,21 @@ module.exports = (function () {
             });
 
             return res.status(200)
-                .json({
-                    data: pojos,
-                    status: 'success',
-                    message: 'Retrieved all books'
-                });
+                // .json({
+                //     data: pojos,
+                //     status: 'success',
+                //     message: 'Retrieved all books'
+                // });
+                .json(pojos);
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                return res.status(500).json({
-                    status: 'error',
-                    message: 'Could not retrieve books'
-                });
+                // return res.status(500).json({
+                //     status: 'error',
+                //     message: 'Could not retrieve books'
+                // });
+                return res.status(500);
             }
         });
 
@@ -379,10 +382,11 @@ module.exports = (function () {
             // No results returned mean the object is not found
             if (books.length === 0) {
                 // We are able to set the HTTP status code on the res object
-                return res.status(404).json({
-                    status: 'error',
-                    message: "Book not found"
-                });
+                // return res.status(404).json({
+                //     status: 'error',
+                //     message: "Book not found"
+                // });
+                return res.status(404);
             }
 
             var book = books[0];
@@ -400,27 +404,30 @@ module.exports = (function () {
             };
 
             book.Editions.forEach(function (edition) {
-                pojo.links.editions.push('/books/' + book.id + '/editions/' + edition.id);
+                pojo.links.editions.push(edition.id);
             });
 
             book.writtenBy.forEach(function (author) {
-                pojo.links.authors.push('/books/' + book.id + '/authors/' + author.id);
+                pojo.links.authors.push(author.id);
             });
 
+            // return res.status(200)
+            //     .json({
+            //         data: pojo,
+            //         status: 'success',
+            //         message: 'Retrieved one book'
+            //     });
             return res.status(200)
-                .json({
-                    data: pojo,
-                    status: 'success',
-                    message: 'Retrieved one book'
-                });
+                .json(pojo);
 
         }).catch(function (err) {
             if (err) {
                 console.error(err);
-                return res.status(500).json({
-                    status: "error",
-                    message: "Could not retrieve book"
-                });
+                // return res.status(500).json({
+                //     status: "error",
+                //     message: "Could not retrieve book"
+                // });
+                return res.status(500);
             }
         });
     }
