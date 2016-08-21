@@ -1,0 +1,63 @@
+Fantastic Beasts and Where to Find Them: The Original Screenplay Hardcover – 19 Nov 2016
+by J.K. Rowling
+
+See all formats and editions
+
+Kindle Edition
+Hardcover	— Library Binding, 19 Nov 2016
+
+When Magizoologist Newt Scamander arrives in New York, he intends his stay to be just a brief stopover ...
+
+Product details
+Hardcover: 304 pages
+Publisher: Little, Brown; 01 edition (19 Nov. 2016)
+Language: English
+ISBN-10: 1408708981
+ISBN-13: 978-1408708989
+
+sindex: {
+    eidx: '',
+    fidx: ''
+  }
+
+{
+  eidx: 1,
+  fidx: 1,
+  headline:
+  {
+    title: '',
+    format: '',
+    published: ''
+    authors: '' //formatted
+  },
+
+  description: '',
+
+  links: [{
+        edition: '',
+        format: '',
+        published: '',
+        eidx: 0, 1, 1, 2
+        fidx: 0, 0, 1, 0
+      }],
+
+  details:
+  {
+    format: '',
+    pages: '',
+    publisher: '',
+    published: '',
+    edition: '',
+    isbn: '',
+    isbn13: ''
+  }
+}
+
+<a ui-sref="books.detail({eidx: 0, fidx: 0})">Edition 2, Hardcover/a>
+<a ui-sref="books.detail({eidx: 0, fidx: 1})">Edition 2, Paperback</a>
+
+var eidx = $stateParams.eidx;
+var fidx = $stateParams.fidx;
+
+detailsCtrl.booksDetail.Editions[detailCtrl.eidx].published
+detailsCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format

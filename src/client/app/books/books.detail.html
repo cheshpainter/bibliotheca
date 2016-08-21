@@ -9,8 +9,8 @@
         <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published}}</span>
     </div>
     <div>
-        <span>See all formats and editions</span>
-        <li ng-repeat="link in detailCtrl.links">
+        <span><button class="btn btn-link" ng-click="editions = !editions">See all formats and editions</button></span>
+        <li ng-repeat="link in detailCtrl.links" ng-show="editions">
             <a ui-sref="books.detail({ eidx: link.eidx, fidx: link.fidx })">{{link.format}} - Ed.{{link.edition}}, {{link.published}}</a>
         </li>
     </div>
