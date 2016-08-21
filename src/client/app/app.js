@@ -26,6 +26,10 @@ angular.module('biblio', [
                 booksInfo: function(booksInfoResource) {
                     return booksInfoResource.query().$promise;
                 }
+            },
+            params: {
+              eidx: 0,
+              fidx: 0
             }
         })
         .state('books.detail', {
@@ -37,7 +41,7 @@ angular.module('biblio', [
                     controllerAs: 'detailCtrl',
                     resolve: {
                         booksDetail: function (booksDetailResource, $stateParams) {
-                            return booksDetailResource.get({bookid: $stateParams.bookid});
+                            return booksDetailResource.get({bookid: $stateParams.bookid}).$promise;
                         }
                     }
                 }

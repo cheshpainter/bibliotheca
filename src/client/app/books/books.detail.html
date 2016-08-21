@@ -2,6 +2,37 @@
 
 <div>
     <div>
-      <p>{{detailCtrl.booksDetail.title}} written by {{detailCtrl.booksDetail.writtenBy[0].name}}</p>
+        <h3>{{detailCtrl.booksDetail.title}}</h3>
+        <span> </span>
+        <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}</span>
+        <span> - </span>
+        <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published}}</span>
+    </div>
+    <div>
+        <span>See all formats and editions</span>
+        <li ng-repeat="link in detailCtrl.links">
+            <a ui-sref="books.detail({ eidx: link.eidx, fidx: link.fidx })">{{link.format}} - Ed.{{link.edition}}, {{link.published}}</a>
+        </li>
+    </div>
+    <div>
+        <span>{{detailCtrl.booksDetail.description}}</span>
+    </div>
+    <div>
+        <h3>Product details</h3>
+        <div>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].pages}} pages</span>
+        </div>
+        <div>
+            <span>Publisher: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].publisher}}</span>
+        </div>
+        <div>
+            <span>Language: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].editionLanguage}}</span>
+        </div>
+        <div>
+            <span>ISBN-10: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn}}</span>
+        </div>
+        <div>
+            <span>ISBN-13: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn13}}</span>
+        </div>
     </div>
 </div>

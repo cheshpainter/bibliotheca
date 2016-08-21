@@ -32,8 +32,6 @@
             }]
         };
 
-        console.log(vm.gridOptions);
-
         vm.gridOptions.multiSelect = false;
         vm.gridOptions.enableRowSelection = true;
         vm.gridOptions.enableRowHeaderSelection = false;
