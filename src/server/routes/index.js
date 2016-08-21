@@ -6,5 +6,6 @@ module.exports = function (app) {
     app.use('/api/books', require('./books'));
     app.use('/api/authors', require('./authors'));
     app.use('/api/authorships', require('./authorships'));
+    app.use('/api/books-detail', require('./books-detail'));
 
 };

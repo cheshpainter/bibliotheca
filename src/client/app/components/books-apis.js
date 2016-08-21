@@ -19,6 +19,9 @@
         })
         .factory('formatsResource', function($resource, API_END_POINT) {
             return $resource(API_END_POINT + '/api/books/:bookid/editions/:editionid/formats/:formatid');
+        })
+        .factory('booksDetailResource', function($resource, API_END_POINT) {
+            return $resource(API_END_POINT + '/api/books-detail/:bookid');
         });
 
 }());

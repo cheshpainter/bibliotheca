@@ -4,9 +4,9 @@
     angular.module('biblio.books', ['ui.grid', 'ui.grid.selection'])
         .controller('BooksListCtrl', BooksListCtrl);
 
-    BooksListCtrl.$inject = ['$scope', 'booksInfo'];
+    BooksListCtrl.$inject = ['$scope', 'booksInfo', '$state'];
 
-    function BooksListCtrl($scope, booksInfo) {
+    function BooksListCtrl($scope, booksInfo, $state) {
 
         var vm = this;
 
@@ -41,9 +41,8 @@
         vm.gridOptions.onRegisterApi = function(gridApi) {
             vm.gridApi = gridApi;
             vm.gridApi.selection.on.rowSelectionChanged($scope, function(row) {
-              console.log(row);
-              //var selected = row.links.books[0];
-              //$state.go('books.detail', { bookid: selected });
+              var selected = row.entity.links.books[0];
+              $state.go('books.detail', { bookid: selected });
             });
         };
     }

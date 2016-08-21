@@ -4,13 +4,15 @@
     angular.module('biblio.books')
         .controller('BooksDetailCtrl', BooksDetailCtrl);
 
-    BooksDetailCtrl.$inject = ['$scope'];
+    BooksDetailCtrl.$inject = ['$scope', 'booksDetail'];
 
-    function BooksDetailCtrl($scope) {
+    function BooksDetailCtrl($scope, booksDetail) {
 
-      console.log("loading view3 ctrl");
+      console.log("loading Books Detail ctrl");
 
         var vm = this;
+
+        vm.booksDetail = booksDetail;
 
     }
 

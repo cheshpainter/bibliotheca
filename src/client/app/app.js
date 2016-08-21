@@ -35,11 +35,11 @@ angular.module('biblio', [
                     templateUrl: "/src/client/app/books/books.detail.html",
                     controller: 'BooksDetailCtrl',
                     controllerAs: 'detailCtrl',
-                    // resolve: {
-                    //     bookDetail: function (booksResource) {
-                    //         return booksResource.get({bookid: $stateParams.bookid}).$promise;
-                    //     }
-                    // }
+                    resolve: {
+                        booksDetail: function (booksDetailResource, $stateParams) {
+                            return booksDetailResource.get({bookid: $stateParams.bookid});
+                        }
+                    }
                 }
             }
         })
