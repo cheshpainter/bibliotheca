@@ -2,19 +2,18 @@
 
 <div>
     <div>
-        <h3>{{detailCtrl.booksDetail.title}}</h3>
-        <span> </span>
-        <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}</span>
-        <span> - </span>
-        <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published}}</span>
-        <span> by </span>
-        <span>{{detailCtrl.jointAuthors}}</span>
+        <h3>{{detailCtrl.booksDetail.title}} <small>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}} - {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published | date:'MMMM d, y'}}</small></h3>
+        <div>
+            <span>by {{detailCtrl.jointAuthors}}</span>
+        </div>
     </div>
     <div>
-        <span><button class="btn btn-link" ng-click="editions = !editions">See all formats and editions</button></span>
-        <li ng-repeat="link in detailCtrl.links" ng-show="editions">
-            <a ui-sref="books.detail({ eidx: link.eidx, fidx: link.fidx })">{{link.format}} - Ed.{{link.edition}}, {{link.published}}</a>
-        </li>
+        <span class="btn btn-link" ng-click="editions = !editions" ng-show="detailCtrl.links.length > 1">See more formats and editions</span>
+        <ul>
+            <li ng-repeat="link in detailCtrl.links" ng-show="editions">
+                <a ui-sref="books.detail({ eidx: link.eidx, fidx: link.fidx })">{{link.format}} - Ed.{{link.edition}}, {{link.published | date:'MMMM d, y'}}</a>
+            </li>
+        </ul>
     </div>
     <div>
         <span>{{detailCtrl.booksDetail.description}}</span>
@@ -22,19 +21,25 @@
     <div>
         <h3>Product details</h3>
         <div>
-            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].pages}} pages</span>
+            <span class="text-capitalize"><strong>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}: </strong></span>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].pages}} pages</span>
         </div>
         <div>
-            <span>Publisher: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].publisher}}</span>
+            <span><strong>Publisher: </strong></span>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].publisher}}</span>
+            <span>({{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published | date:'MMMM d, y'}})</span>
         </div>
         <div>
-            <span>Language: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].editionLanguage}}</span>
+            <span><strong>Language: </strong></span>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].editionLanguage}}</span>
         </div>
         <div>
-            <span>ISBN-10: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn}}</span>
+            <span><strong>ISBN-10: </strong></span>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn}}</span>
         </div>
         <div>
-            <span>ISBN-13: {{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn13}}</span>
+            <span><strong>ISBN-13: </strong></span>
+            <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn13}}</span>
         </div>
     </div>
 </div>
