@@ -12,8 +12,12 @@
 
         var vm = this;
 
+
+
         vm.eidx = $stateParams.eidx;
         vm.fidx = $stateParams.fidx;
+
+        console.log('eidx: ' + vm.eidx + ', fidx: ' + vm.fidx);
 
         var links = [];
         angular.forEach(booksDetail.Editions, function(edition, eindex) {
@@ -30,8 +34,23 @@
             });
         });
 
+        var jointAuthors = '';
+        angular.forEach(booksDetail.writtenBy, function(author, index) {
+            if (index > 0) {
+                jointAuthors += ', ';
+            }
+            jointAuthors += author.name;
+        });
+
+        // Don't add to a resource
+        // booksDetail.jointAuthors = jointAuthors;
+        vm.jointAuthors = jointAuthors;
+
         vm.links = links;
         vm.booksDetail = booksDetail;
+
+        console.log(vm.links);
+        console.log(vm.booksDetail);
 
     }
 

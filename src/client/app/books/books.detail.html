@@ -7,6 +7,8 @@
         <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].Formats[detailCtrl.fidx].format}}</span>
         <span> - </span>
         <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].published}}</span>
+        <span> by </span>
+        <span>{{detailCtrl.jointAuthors}}</span>
     </div>
     <div>
         <span><button class="btn btn-link" ng-click="editions = !editions">See all formats and editions</button></span>

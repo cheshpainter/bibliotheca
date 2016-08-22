@@ -40,7 +40,7 @@
             vm.gridApi = gridApi;
             vm.gridApi.selection.on.rowSelectionChanged($scope, function(row) {
               var selected = row.entity.links.books[0];
-              $state.go('books.detail', { bookid: selected });
+              $state.go('books.detail', { bookid: selected, eidx: 0, fidx: 0 });
             });
         };
     }
