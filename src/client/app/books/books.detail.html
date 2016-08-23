@@ -8,22 +8,21 @@
         </div>
     </div>
     <div>
-        <span class="btn btn-link" ng-click="editions = !editions" ng-show="detailCtrl.links.length > 1">See more formats and editions</span>
+        <span class="btn btn-link" ng-click="editions = !editions">See more formats and editions</span>
         <ul ng-show="editions">
             <li ng-repeat="link in detailCtrl.links">
                 <a ui-sref="books.detail({ eidx: link.eidx, fidx: link.fidx })">{{link.format}} - Ed.{{link.edition}}, {{link.published | date:'MMMM d, y'}}</a>
             </li>
-            <li><a>Add another edition</a></li>
+            <li><a ui-sref="books.detail.createEdition">Add another edition</a></li>
         </ul>
     </div>
+    <div ui-view="createEdition"></div>
     <div>
         <span>{{detailCtrl.booksDetail.description}}</span>
     </div>
 
-    <!--
-    <div><span><a ui-sref="edit">Edit title and description</a></span></div>
-    <div ui-view="edit"></div>
-    -->
+    <div><span><a ui-sref="books.detail.updateBook">Edit the title and description</a></span></div>
+    <div ui-view="updateBook"></div>
     <div>
         <h3>Edition details</h3>
         <div>
@@ -47,6 +46,7 @@
             <span><strong>ISBN-13: </strong></span>
             <span>{{detailCtrl.booksDetail.Editions[detailCtrl.eidx].isbn13}}</span>
         </div>
-        <div><span><a>Edit edition details</a></span></div>
+        <div><span><a ui-sref="books.detail.updateEdition">Edit the edition details</a></span></div>
+        <div ui-view="updateEdition"></div>
     </div>
 </div>

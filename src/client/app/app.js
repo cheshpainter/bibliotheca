@@ -47,16 +47,36 @@ angular.module('biblio', [
                 }
             }
         })
-        // .state('books.detail.edit', {
-        //     url: "edit",
-        //     views: {
-        //         'edit': {
-        //             templateUrl: "/src/client/app/books/books.detail.edit.html",
-        //             controller: 'BooksEditCtrl',
-        //             controllerAs: 'editCtrl',
-        //         }
-        //     }
-        // })
+        .state('books.detail.updateBook', {
+            url: "^/updateBook",
+            views: {
+                'updateBook': {
+                    templateUrl: "/src/client/app/books/update-book.html",
+                    controller: 'UpdateBookCtrl',
+                    controllerAs: 'editCtrl',
+                }
+            }
+        })
+        .state('books.detail.updateEdition', {
+            url: "^/updateEdition",
+            views: {
+                'updateEdition': {
+                    templateUrl: "/src/client/app/books/update-edition.html",
+                    controller: 'UpdateEditionCtrl',
+                    controllerAs: 'editCtrl',
+                }
+            }
+        })
+        .state('books.detail.createEdition', {
+            url: "^/createEdition",
+            views: {
+                'createEdition': {
+                    templateUrl: "/src/client/app/books/create-edition.html",
+                    controller: 'CreateEditionCtrl',
+                    controllerAs: 'editCtrl',
+                }
+            }
+        })
         .state('view2', {
             url: "/view2",
             templateUrl: "/src/client/app/view2/view2.html",
