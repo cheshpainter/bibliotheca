@@ -47,6 +47,16 @@ angular.module('biblio', [
                 }
             }
         })
+        // .state('books.detail.edit', {
+        //     url: "edit",
+        //     views: {
+        //         'edit': {
+        //             templateUrl: "/src/client/app/books/books.detail.edit.html",
+        //             controller: 'BooksEditCtrl',
+        //             controllerAs: 'editCtrl',
+        //         }
+        //     }
+        // })
         .state('view2', {
             url: "/view2",
             templateUrl: "/src/client/app/view2/view2.html",
